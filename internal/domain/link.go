@@ -16,10 +16,10 @@ func NewKodik(client http.Client, token string) *Kodik {
 	return &Kodik{client: client, token: token}
 }
 
-func (k *Kodik) ByKinopoiskID(kinopoiskID string) (string, error) {
+func (k *Kodik) ByID(service, id string) (string, error) {
 	var kodikResponse model.KodikAPI
 
-	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&kinopoisk_id=%s", k.token, kinopoiskID)
+	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&%s=%s", k.token, service, id)
 	resp, err := k.client.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("error while sending request to %s: %w", url, err)

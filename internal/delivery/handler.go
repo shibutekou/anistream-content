@@ -16,9 +16,10 @@ func NewHandler(kodik *domain.Kodik) *Handler {
 func (h *Handler) InitRoutes() *fiber.App {
 	app := fiber.New()
 
-	anime := app.Group("/anime")
-	anime.Get("/link", h.KinopoiskIDHandler)
-	//anime.Get("/search")
+	title := app.Group("/title")
+	{
+		title.Get("/player", h.ByIDHandler)
+	}
 
 	return app
 }
