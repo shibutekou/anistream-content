@@ -13,6 +13,7 @@ type Results []struct {
 	Link          string `json:"link,omitempty"`
 	Title         string `json:"title,omitempty"`
 	TitleOrig     string `json:"title_orig,omitempty"`
+	OtherTitle    string `json:"other_title"`
 	Translation   `json:"translation"`
 	Year          int       `json:"year,omitempty"`
 	LastSeason    int       `json:"last_season,omitempty"`

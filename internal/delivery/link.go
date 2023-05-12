@@ -9,10 +9,10 @@ import (
 func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
 	service := determineService(c)
 	if service == "" {
-		h.log.Info("no such service")
+		h.log.Info("filter not passed or does not exist")
 
 		c.Status(http.StatusBadRequest)
-		return c.JSON("no such service for searching title")
+		return c.JSON("filter not passed or does not exist")
 	}
 
 	id := c.Query(service)
@@ -22,7 +22,7 @@ func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
 		if err == apperror.ErrTitleNotFound {
 			h.log.Infof("no such title by %s %s: %v", service, id, err)
 
-			c.Status(http.StatusInternalServerError)
+			c.Status(http.StatusNotFound)
 			return c.JSON(err.Error())
 		}
 	}
@@ -30,14 +30,24 @@ func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
 	return c.JSON(link)
 }
 
-func determineService(c *fiber.Ctx) string {
-	availableServices := []string{"kinopoisk_id", "imdb_id", "shikimori_id", "mdl_id"}
+func (h *Handler) LinkByTitleNameHandler(c *fiber.Ctx) error {
+	title := c.Query("title")
+	if title == "" {
+		h.log.Info("parameter title is required")
 
-	for _, s := range availableServices {
-		if c.Query(s) != "" {
-			return s
+		c.Status(http.StatusBadRequest)
+		return c.JSON("parameter title is required")
+	}
+
+	link, err := h.link.ByTitleName(title)
+	if err != nil {
+		if err == apperror.ErrTitleNotFound {
+			h.log.Infof("no such title by name %s: %v", title, err)
+
+			c.Status(http.StatusNotFound)
+			return c.JSON(err.Error())
 		}
 	}
 
-	return ""
+	return c.JSON(link)
 }
