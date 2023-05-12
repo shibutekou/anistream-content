@@ -3,14 +3,16 @@ package delivery
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/vgekko/ani-go/internal/domain"
+	"go.uber.org/zap"
 )
 
 type Handler struct {
-	kodik *domain.Kodik
+	link *domain.Link
+	log  *zap.SugaredLogger
 }
 
-func NewHandler(kodik *domain.Kodik) *Handler {
-	return &Handler{kodik: kodik}
+func NewHandler(link *domain.Link, log *zap.SugaredLogger) *Handler {
+	return &Handler{link: link, log: log}
 }
 
 func (h *Handler) InitRoutes() *fiber.App {
@@ -18,7 +20,7 @@ func (h *Handler) InitRoutes() *fiber.App {
 
 	title := app.Group("/title")
 	{
-		title.Get("/player", h.ByIDHandler)
+		title.Get("/link", h.LinkByIDHandler)
 	}
 
 	return app

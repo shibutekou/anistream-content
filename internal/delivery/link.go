@@ -2,24 +2,32 @@ package delivery
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"log"
+	"github.com/vgekko/ani-go/pkg/apperror"
+	"net/http"
 )
 
-func (h *Handler) ByIDHandler(c *fiber.Ctx) error {
+func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
 	service := determineService(c)
+	if service == "" {
+		h.log.Info("no such service")
+
+		c.Status(http.StatusBadRequest)
+		return c.JSON("no such service for searching title")
+	}
+
 	id := c.Query(service)
 
-	link, err := h.kodik.ByServiceID(service, id)
+	link, err := h.link.ByID(service, id)
 	if err != nil {
-		log.Printf("error while getting link by %s %s: %v", service, id, err)
-		return err
+		if err == apperror.ErrTitleNotFound {
+			h.log.Infof("no such title by %s %s: %v", service, id, err)
+
+			c.Status(http.StatusInternalServerError)
+			return c.JSON(err.Error())
+		}
 	}
 
-	if err := c.JSON(link); err != nil {
-		return err
-	}
-
-	return nil
+	return c.JSON(link)
 }
 
 func determineService(c *fiber.Ctx) string {
