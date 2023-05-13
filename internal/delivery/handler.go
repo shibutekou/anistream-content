@@ -7,13 +7,12 @@ import (
 )
 
 type Handler struct {
-	link *domain.Link
-	info *domain.Info
-	log  *zap.SugaredLogger
+	service *domain.Service
+	log     *zap.SugaredLogger
 }
 
-func NewHandler(link *domain.Link, info *domain.Info, log *zap.SugaredLogger) *Handler {
-	return &Handler{link: link, info: info, log: log}
+func NewHandler(service *domain.Service, log *zap.SugaredLogger) *Handler {
+	return &Handler{service: service, log: log}
 }
 
 func (h *Handler) InitRoutes() *fiber.App {
@@ -23,8 +22,8 @@ func (h *Handler) InitRoutes() *fiber.App {
 	{
 		title.Get("/link/id", h.LinkByIDHandler)
 		title.Get("/link/title", h.LinkByTitleNameHandler)
-		title.Get("/info/id", h.InfoByID)
-		title.Get("/info/title", h.InfoByTitleName)
+		title.Get("/info/id", h.InfoByIDHandler)
+		title.Get("/info/title", h.InfoByTitleNameHandler)
 	}
 
 	return app

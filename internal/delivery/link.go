@@ -17,7 +17,7 @@ func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
 
 	id := c.Query(service)
 
-	link, err := h.link.ByID(service, id)
+	link, err := h.service.Link.ByID(service, id)
 	if err != nil {
 		if err == apperror.ErrTitleNotFound {
 			h.log.Infof("no such title by %s %s: %v", service, id, err)
@@ -39,7 +39,7 @@ func (h *Handler) LinkByTitleNameHandler(c *fiber.Ctx) error {
 		return c.JSON("parameter title is required")
 	}
 
-	link, err := h.link.ByTitleName(title)
+	link, err := h.service.Link.ByTitleName(title)
 	if err != nil {
 		if err == apperror.ErrTitleNotFound {
 			h.log.Infof("no such title by name %s: %v", title, err)

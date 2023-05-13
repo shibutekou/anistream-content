@@ -12,9 +12,8 @@ func main() {
 	token := os.Getenv("KODIK_TOKEN")
 
 	log := logger.GetLogger()
-	link := domain.NewLink(token, http.Client{})
-	info := domain.NewInfo(token, http.Client{})
-	handler := delivery.NewHandler(link, info, log)
+	service := domain.NewService(token, http.Client{})
+	handler := delivery.NewHandler(service, log)
 
 	app := handler.InitRoutes()
 

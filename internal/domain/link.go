@@ -8,19 +8,19 @@ import (
 	"net/http"
 )
 
-type Link struct {
+type LinkServiceImpl struct {
 	token  string
 	client http.Client
 }
 
-func NewLink(token string, client http.Client) *Link {
-	return &Link{
+func NewLinkService(token string, client http.Client) *LinkServiceImpl {
+	return &LinkServiceImpl{
 		token:  token,
 		client: client,
 	}
 }
 
-func (l *Link) ByID(service, id string) (string, error) {
+func (l *LinkServiceImpl) ByID(service, id string) (string, error) {
 	var kodikResponse model.KodikAPI
 
 	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&%s=%s", l.token, service, id)
@@ -43,7 +43,7 @@ func (l *Link) ByID(service, id string) (string, error) {
 	return link, nil
 }
 
-func (l *Link) ByTitleName(title string) (string, error) {
+func (l *LinkServiceImpl) ByTitleName(title string) (string, error) {
 	var kodikResponse model.KodikAPI
 
 	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&title=%s", l.token, title)
