@@ -15,6 +15,10 @@ type infoService interface {
 	ByTitleName(title string) ([]model.TitleInfo, error)
 }
 
+type conversionService interface {
+	toTitleInfo(api *model.KodikAPI) []model.TitleInfo
+}
+
 type Service struct {
 	Link linkService
 	Info infoService
@@ -22,7 +26,8 @@ type Service struct {
 
 func NewService(token string, client http.Client) *Service {
 	linkServiceImpl := NewLinkService(token, client)
-	infoServiceImpl := NewInfoService(token, client)
+	conversionServiceImpl := NewConversionService()
+	infoServiceImpl := NewInfoService(token, client, conversionServiceImpl)
 
 	return &Service{
 		Link: linkServiceImpl,

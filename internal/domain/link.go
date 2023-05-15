@@ -9,8 +9,9 @@ import (
 )
 
 type LinkServiceImpl struct {
-	token  string
-	client http.Client
+	token      string
+	client     http.Client
+	conversion conversionService
 }
 
 func NewLinkService(token string, client http.Client) *LinkServiceImpl {

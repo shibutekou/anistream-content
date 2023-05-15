@@ -6,4 +6,4 @@ run:
 
 docker:
 	docker build --tag anigo .
-	docker run --network=host anigo
+	docker run -e KODIK_TOKEN=${KODIK_TOKEN} --network=host anigo

@@ -7,7 +7,7 @@ import (
 )
 
 func (h *Handler) LinkByIDHandler(c *fiber.Ctx) error {
-	service := determineService(c)
+	service := h.dtm.determineService(c)
 	if service == "" {
 		h.log.Info("filter not passed or does not exist")
 
