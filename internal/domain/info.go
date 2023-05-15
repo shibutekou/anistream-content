@@ -41,7 +41,7 @@ func (i *InfoServiceImpl) ByID(service, id string) ([]model.TitleInfo, error) {
 		return nil, apperror.ErrTitleNotFound
 	}
 
-	titleInfos = i.conversion.toTitleInfo(&kodikResponse)
+	titleInfos = i.conversion.toTitleInfo(kodikResponse)
 
 	return titleInfos, nil
 }
@@ -65,7 +65,7 @@ func (i *InfoServiceImpl) ByTitleName(title string) ([]model.TitleInfo, error) {
 		return nil, apperror.ErrTitleNotFound
 	}
 
-	titleInfos = i.conversion.toTitleInfo(&kodikResponse)
+	titleInfos = i.conversion.toTitleInfo(kodikResponse)
 
 	return titleInfos, nil
 }

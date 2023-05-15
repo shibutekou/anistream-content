@@ -16,7 +16,7 @@ type infoService interface {
 }
 
 type conversionService interface {
-	toTitleInfo(api *model.KodikAPI) []model.TitleInfo
+	toTitleInfo(api model.KodikAPI) []model.TitleInfo
 }
 
 type Service struct {

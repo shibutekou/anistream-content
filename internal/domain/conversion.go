@@ -10,7 +10,7 @@ func NewConversionService() *ConversionServiceImpl {
 	return &ConversionServiceImpl{}
 }
 
-func (c *ConversionServiceImpl) toTitleInfo(kodik *model.KodikAPI) []model.TitleInfo {
+func (c *ConversionServiceImpl) toTitleInfo(kodik model.KodikAPI) []model.TitleInfo {
 	var titleInfos []model.TitleInfo
 
 	for _, v := range kodik.Results {
@@ -25,6 +25,7 @@ func (c *ConversionServiceImpl) toTitleInfo(kodik *model.KodikAPI) []model.Title
 			KinopoiskID:   v.KinopoiskID,
 			ImdbID:        v.ImdbID,
 			ShikimoriID:   v.ShikimoriID,
+			Screenshots:   v.Screenshots,
 		}
 
 		titleInfos = append(titleInfos, info)
