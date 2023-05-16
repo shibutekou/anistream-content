@@ -11,7 +11,7 @@ import (
 func main() {
 	token := os.Getenv("KODIK_TOKEN")
 
-	log := logger.GetLogger()
+	log := logger.Sugared()
 	service := domain.NewService(token, http.Client{})
 	handler := delivery.NewHandler(service, log)
 

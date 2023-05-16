@@ -2,7 +2,7 @@ package logger
 
 import "go.uber.org/zap"
 
-func GetLogger() *zap.SugaredLogger {
+func Sugared() *zap.SugaredLogger {
 	l, _ := zap.NewProduction()
 	defer l.Sync()
 
