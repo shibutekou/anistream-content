@@ -44,23 +44,3 @@ type KodikAPI struct {
 		Screenshots []string `json:"screenshots,omitempty"`
 	}
 }
-
-func (k *KodikAPI) ToTitleInfo() []TitleInfo {
-	var ti TitleInfo
-	titleInfos := make([]TitleInfo, len(k.Results), cap(k.Results))
-
-	for _, v := range k.Results {
-		ti.Title = v.Title
-		ti.TitleOrig = v.TitleOrig
-		ti.OtherTitle = v.OtherTitle
-		ti.Year = v.Year
-		ti.KinopoiskID = v.KinopoiskID
-		ti.ShikimoriID = v.ShikimoriID
-		ti.IMDbID = v.IMDbID
-		ti.Screenshots = v.Screenshots
-
-		titleInfos = append(titleInfos, ti)
-	}
-
-	return titleInfos
-}
