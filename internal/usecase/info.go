@@ -21,7 +21,7 @@ func (uc *InfoUseCase) ByKinopoiskID(id string) ([]entity.TitleInfo, error) {
 		return nil, fmt.Errorf("InfoUseCase: ByKinopoiskID: uc.WebAPI.ResultsByKinopoiskID: %w", err)
 	}
 
-	titleInfos := results.ToTitleInfo()
+	titleInfos := toTitleInfo(results)
 
 	return titleInfos, nil
 }
@@ -32,7 +32,7 @@ func (uc *InfoUseCase) ByShikimoriID(id string) ([]entity.TitleInfo, error) {
 		return nil, fmt.Errorf("InfoUseCase: ByShikimoriID: uc.WebAPI.ResultsByShikimoriID: %w", err)
 	}
 
-	titleInfos := results.ToTitleInfo()
+	titleInfos := toTitleInfo(results)
 
 	return titleInfos, nil
 }
@@ -43,7 +43,7 @@ func (uc *InfoUseCase) ByIMDbID(id string) ([]entity.TitleInfo, error) {
 		return nil, fmt.Errorf("InfoUseCase: ByIMDbID: uc.WebAPI.ResultsByIMDbID: %w", err)
 	}
 
-	titleInfos := results.ToTitleInfo()
+	titleInfos := toTitleInfo(results)
 
 	return titleInfos, nil
 }
@@ -54,7 +54,28 @@ func (uc *InfoUseCase) ByTitleName(title string) ([]entity.TitleInfo, error) {
 		return nil, fmt.Errorf("InfoUseCase: ByTitleName: uc.WebAPI.ResultsByTitle: %w", err)
 	}
 
-	titleInfos := results.ToTitleInfo()
+	titleInfos := toTitleInfo(results)
 
 	return titleInfos, nil
 }
+
+func toTitleInfo(src entity.KodikAPI) []entity.TitleInfo {
+	var ti entity.TitleInfo
+	titleInfos := make([]entity.TitleInfo, 0, len(src.Results))
+
+	for _, v := range src.Results {
+		ti.Title = v.Title
+		ti.TitleOrig = v.TitleOrig
+		ti.OtherTitle = v.OtherTitle
+		ti.Year = v.Year
+		ti.KinopoiskID = v.KinopoiskID
+		ti.ShikimoriID = v.ShikimoriID
+		ti.IMDbID = v.IMDbID
+		ti.Screenshots = v.Screenshots
+
+		titleInfos = append(titleInfos, ti)
+	}
+
+	return titleInfos
+}
+
