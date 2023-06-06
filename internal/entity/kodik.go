@@ -6,14 +6,14 @@ import (
 )
 
 type TitleInfo struct {
-	Title       string
-	TitleOrig   string
-	OtherTitle  string
-	Year        int
-	KinopoiskID string
-	ShikimoriID string
-	IMDbID      string
-	Screenshots []string
+	Title       string   `json:"title,omitempty"`
+	TitleOrig   string   `json:"title_orig,omitempty"`
+	OtherTitle  string   `json:"other_title,omitempty"`
+	Year        int      `json:"year,omitempty"`
+	KinopoiskID string   `json:"kinopoisk_id,omitempty"`
+	ShikimoriID string   `json:"shikimori_id,omitempty"`
+	IMDbID      string   `json:"imdb_id,omitempty"`
+	Screenshots []string `json:"screenshots,omitempty"`
 }
 
 type KodikAPI struct {

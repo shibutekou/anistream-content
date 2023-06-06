@@ -1,24 +1,66 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-
 </head>
 <body>
-<script>
-    fetch("http://localhost:8800/v1/link/kinopoisk?kinopoisk_id=958722")
-          .then(function(response) {
-            return response.text();
-          })
-          .then(function(data) {
-            document.getElementById("video_source").src = data.replace(/['"]+/g, '');
-          });
-</script>
-<iframe id="video_source" width="480" height="360" src
-        allowfullscreen></iframe>
+
+<div id="search">
+    <label>
+        <input type="text" name="Enter title name..." id="searchInput" placeholder="Kinopoisk ID">
+        <button data-initialized="true" onclick="init(document.getElementById('searchInput').value)">Search</button>
+    </label>
+    <script>
+        function getInfo(title) {
+            fetch("http://localhost:8800/v1/info/kinopoisk?kinopoisk_id=" + title)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                const existingImgs = document.querySelectorAll('img');
+
+                let images = data[0].screenshots;
+
+                const container = document.getElementById("image-container")
+
+                for (let i = 0; i < images.length; i++) {
+                    if (existingImgs.length < 5) {
+                        const img = document.createElement('img');
+                        img.height = 141;
+                        img.Width = 250;
+                        img.src = images[i];
+                        container.appendChild(img);
+                    } else {
+                        existingImgs[i].src = images[i]
+                    }
+                }
+            });
+        }
+
+        function getLink(title) {
+            fetch("http://localhost:8800/v1/link/kinopoisk?kinopoisk_id=" + title)
+              .then(function(response) {
+                return response.text();
+              })
+              .then(function(data) {
+                document.getElementById("video_source").src = data.replace(/['"]+/g, '');
+              });
+        }
+
+        function init(title) {
+            getInfo(title);
+            getLink(title);
+        }
+    </script>
+
+    <div id="image-container"></div>
+
+    <iframe id="video_source" width="480" height="360" src="" allowfullscreen></iframe>
+</div>
+
 </body>
 </html>
