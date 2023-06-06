@@ -1,8 +1,29 @@
 package entity
 
-import "time"
+import (
+	"encoding/json"
+	"github.com/bytedance/sonic/encoder"
+)
 
 type TitleInfo struct {
+	Title       string
+	TitleOrig   string
+	OtherTitle  string
+	Year        int
+	KinopoiskID string
+	ShikimoriID string
+	IMDbID      string
+	Screenshots []string
+}
+
+type KodikAPI struct {
+	Time    string `json:"time,omitempty"`
+	Total   int    `json:"total,omitempty"`
+	Results `json:"results"`
+}
+
+type Results []struct {
+	Link string `json:"link"`
 	Title       string   `json:"title,omitempty"`
 	TitleOrig   string   `json:"title_orig,omitempty"`
 	OtherTitle  string   `json:"other_title"`
@@ -13,34 +34,14 @@ type TitleInfo struct {
 	Screenshots []string `json:"screenshots"`
 }
 
-type KodikAPI struct {
-	Time    string `json:"time,omitempty"`
-	Total   int    `json:"total,omitempty"`
-	Results []struct {
-		ID          string `json:"id,omitempty"`
-		Link        string `json:"link,omitempty"`
-		Title       string `json:"title,omitempty"`
-		TitleOrig   string `json:"title_orig,omitempty"`
-		OtherTitle  string `json:"other_title"`
-		Translation struct {
-			ID    int    `json:"id,omitempty"`
-			Title string `json:"title,omitempty"`
-			Voice string `json:"voice,omitempty"`
-		} `json:"translation"`
-		Year          int       `json:"year,omitempty"`
-		LastSeason    int       `json:"last_season,omitempty"`
-		LastEpisode   int       `json:"last_episode,omitempty"`
-		EpisodesCount int       `json:"episodes_count,omitempty"`
-		KinopoiskID   string    `json:"kinopoisk_id,omitempty"`
-		IMDbID        string    `json:"imdb_id,omitempty"`
-		ShikimoriID   string    `json:"shikimori_id,omitempty"`
-		Quality       string    `json:"quality,omitempty"`
-		CreatedAt     time.Time `json:"created_at"`
-		UpdatedAt     time.Time `json:"updated_at"`
-		Seasons       map[string]struct {
-			Link     string            `json:"link"`
-			Episodes map[string]string `json:"episodes"`
-		} `json:"seasons"`
-		Screenshots []string `json:"screenshots,omitempty"`
-	}
+type TitleInfos []TitleInfo
+
+func (tis TitleInfos) MarshalBinary() (data []byte, err error) {
+	b, err := encoder.Encode(tis, encoder.CompactMarshaler)
+
+	return b, nil
+}
+
+func (tis TitleInfos) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, &tis)
 }

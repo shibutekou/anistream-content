@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"strings"
 )
 
 type LinkUseCase struct {
@@ -18,7 +19,13 @@ func (l *LinkUseCase) ByKinopoiskID(id string) (string, error) {
 		return "", fmt.Errorf("LinkUseCase: ByKinopoiskID: uc.WebAPI.ResultsByKinopoiskID: %w", err)
 	}
 
-	return results.Results[0].Link, nil
+	link := results.Results[0].Link
+
+	link = strings.TrimLeft(link, "/")
+
+	resp := fmt.Sprintf("http://%s", link)
+	//return results.Results[0].Link, nil
+	return resp, nil
 }
 
 func (l *LinkUseCase) ByShikimoriID(id string) (string, error) {

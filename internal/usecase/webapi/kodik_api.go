@@ -26,7 +26,7 @@ func (k *KodikWebAPI) ResultsByKinopoiskID(id string) (entity.KodikAPI, error) {
 	var kodikResponse entity.KodikAPI
 
 	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&kinopoisk_id=%s", k.token, id)
-
+	fmt.Println(id)
 	resp, err := k.client.Get(url)
 	if err != nil {
 		return entity.KodikAPI{}, err
