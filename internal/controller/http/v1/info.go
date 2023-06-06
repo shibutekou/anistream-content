@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
@@ -34,7 +35,7 @@ func (r *infoRoutes) infoByKinopoiskID(c *gin.Context) {
 
 	titleInfos, err := r.uc.ByKinopoiskID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given kinopoisk id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -53,7 +54,7 @@ func (r *infoRoutes) infoByShikimoriID(c *gin.Context) {
 
 	titleInfos, err := r.uc.ByShikimoriID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given shikimori id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -72,7 +73,7 @@ func (r *infoRoutes) infoByIMDbID(c *gin.Context) {
 
 	titleInfos, err := r.uc.ByIMDbID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given imdb id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -91,7 +92,7 @@ func (r *infoRoutes) InfoByTitleNameHandler(c *gin.Context) {
 
 	titleInfos, err := r.uc.ByTitleName(title)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given title name: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())

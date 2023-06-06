@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
@@ -26,7 +27,7 @@ func newLinkRoutes(handler *gin.RouterGroup, uc usecase.Link, l *zap.Logger) {
 }
 
 func (r *linkRoutes) linkByKinopoiskID(c *gin.Context) {
-	id := c.DefaultQuery("kinopoisk_id", "")
+	id := c.Query("kinopoisk_id")
 	if id == "" {
 		r.l.Info("parameter kinopoisk_id is required")
 		c.JSON(http.StatusBadRequest, "parameter kinopoisk_id is required")
@@ -34,7 +35,7 @@ func (r *linkRoutes) linkByKinopoiskID(c *gin.Context) {
 
 	link, err := r.uc.ByKinopoiskID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given kinopoisk id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -53,7 +54,7 @@ func (r *linkRoutes) linkByShikimoriID(c *gin.Context) {
 
 	link, err := r.uc.ByShikimoriID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given shikimori id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -72,7 +73,7 @@ func (r *linkRoutes) linkByIMDbID(c *gin.Context) {
 
 	link, err := r.uc.ByIMDbID(id)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given imdb id: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())
@@ -91,7 +92,7 @@ func (r *linkRoutes) linkByTitleNameHandler(c *gin.Context) {
 
 	link, err := r.uc.ByTitleName(title)
 	if err != nil {
-		if err == apperror.ErrTitleNotFound {
+		if errors.Is(err, apperror.ErrTitleNotFound) {
 			r.l.Info("no such title by given title name: " + err.Error())
 
 			c.JSON(http.StatusNotFound, err.Error())

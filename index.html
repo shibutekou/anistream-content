@@ -6,10 +6,19 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+
 </head>
 <body>
-<img src="https://i.kodik.biz/screenshots/seria/176463/1.jpg" width="400" height="300">
-<iframe width="480" height="360" src=http://kodik.info/video/34204/89e3a2101a462afdb31f28d133a32880/720p
+<script>
+    fetch("http://localhost:8800/v1/link/kinopoisk?kinopoisk_id=958722")
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(data) {
+            document.getElementById("video_source").src = data.replace(/['"]+/g, '');
+          });
+</script>
+<iframe id="video_source" width="480" height="360" src
         allowfullscreen></iframe>
 </body>
 </html>
