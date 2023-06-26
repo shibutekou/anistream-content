@@ -5,8 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
+	"github.com/vgekko/ani-go/pkg/normalize"
 	"go.uber.org/zap"
 	"net/http"
+	"net/url"
 )
 
 type infoRoutes struct {
@@ -19,83 +21,26 @@ func newInfoRoutes(handler *gin.RouterGroup, uc usecase.Info, l *zap.Logger) {
 
 	h := handler.Group("/info")
 	{
-		h.GET("kinopoisk", r.infoByKinopoiskID)
-		h.GET("shikimori", r.infoByShikimoriID)
-		h.GET("imdb", r.infoByIMDbID)
-		h.GET("title", r.InfoByTitleNameHandler)
+		h.GET("search", r.search)
 	}
 }
 
-func (r *infoRoutes) infoByKinopoiskID(c *gin.Context) {
-	id := c.Query("kinopoisk_id")
-	if id == "" {
-		r.l.Info("parameter kinopoisk_id is required")
-		c.JSON(http.StatusBadRequest, "parameter kinopoisk_id is required")
+func (r *infoRoutes) search(c *gin.Context) {
+	params, err := url.ParseQuery(c.Request.URL.RawQuery)
+	if err != nil {
+		r.l.Info("infoRoutes.Search: " + err.Error())
+		c.JSON(http.StatusInternalServerError, "something went wrong")
 	}
 
-	titleInfos, err := r.uc.ByKinopoiskID(id)
+	option, value := normalize.Params(params.Encode(), "=")
+
+	titleInfos, err := r.uc.Search(option, value)
 	if err != nil {
 		if errors.Is(err, apperror.ErrTitleNotFound) {
-			r.l.Info("no such title by given kinopoisk id: " + err.Error())
+			r.l.Info("infoRoutes.Search: " + err.Error())
+			c.JSON(http.StatusNotFound, "title with given parameters not found")
 
-			c.JSON(http.StatusNotFound, err.Error())
-		}
-	}
-
-	c.JSON(http.StatusOK, titleInfos)
-}
-
-func (r *infoRoutes) infoByShikimoriID(c *gin.Context) {
-	id := c.Query("shikimori_id")
-	if id == "" {
-		r.l.Info("parameter shikimori_id is required")
-		c.JSON(http.StatusBadRequest, "parameter shikimori_id is required")
-	}
-
-	titleInfos, err := r.uc.ByShikimoriID(id)
-	if err != nil {
-		if errors.Is(err, apperror.ErrTitleNotFound) {
-			r.l.Info("no such title by given shikimori id: " + err.Error())
-
-			c.JSON(http.StatusNotFound, err.Error())
-		}
-	}
-
-	c.JSON(http.StatusOK, titleInfos)
-}
-
-func (r *infoRoutes) infoByIMDbID(c *gin.Context) {
-	id := c.Query("imdb_id")
-	if id == "" {
-		r.l.Info("parameter imdb_id is required")
-		c.JSON(http.StatusBadRequest, "parameter imdb_id is required")
-	}
-
-	titleInfos, err := r.uc.ByIMDbID(id)
-	if err != nil {
-		if errors.Is(err, apperror.ErrTitleNotFound) {
-			r.l.Info("no such title by given imdb id: " + err.Error())
-
-			c.JSON(http.StatusNotFound, err.Error())
-		}
-	}
-
-	c.JSON(http.StatusOK, titleInfos)
-}
-
-func (r *infoRoutes) InfoByTitleNameHandler(c *gin.Context) {
-	title := c.Query("title")
-	if title == "" {
-		r.l.Info("parameter title is required")
-		c.JSON(http.StatusBadRequest, "parameter title is required")
-	}
-
-	titleInfos, err := r.uc.ByTitleName(title)
-	if err != nil {
-		if errors.Is(err, apperror.ErrTitleNotFound) {
-			r.l.Info("no such title by given title name: " + err.Error())
-
-			c.JSON(http.StatusNotFound, err.Error())
+			return
 		}
 	}
 

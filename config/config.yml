@@ -1,0 +1,5 @@
+postgres:
+  pool_max: 2
+
+redis:
+  info_cache_ttl: 43200

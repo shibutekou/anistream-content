@@ -48,7 +48,7 @@ func (r *InfoRedisRepo) FromCache(ctx context.Context, key string) (entity.Title
 	}
 
 	if err := json.Unmarshal(asBytes, &ti); err != nil {
-		return nil, fmt.Errorf("InfoRedisRepo.FromCache.json.Unmarshal: %w", err)
+		return nil, fmt.Errorf("InfoRedisRepo.FromCache: %w", err)
 	}
 
 	return ti, nil

@@ -5,21 +5,15 @@ import (
 	"github.com/vgekko/ani-go/internal/entity"
 )
 
-//go:generate mockgen -source=interfaces.go -destination=./mocks_test.go -package=usecase_test
+//go:generate mockgen -source=interfaces.go -destination=./mock.go -package=usecase_test
 
 type (
 	Link interface {
-		ByKinopoiskID(id string) (string, error)
-		ByShikimoriID(id string) (string, error)
-		ByIMDbID(id string) (string, error)
-		ByTitleName(title string) (string, error)
+		Search(option, value string) (string, error)
 	}
 
 	Info interface {
-		ByKinopoiskID(id string) (entity.TitleInfos, error)
-		ByShikimoriID(id string) ([]entity.TitleInfo, error)
-		ByIMDbID(id string) ([]entity.TitleInfo, error)
-		ByTitleName(title string) ([]entity.TitleInfo, error)
+		Search(option, value string) (entity.TitleInfos, error)
 	}
 
 	InfoRedisRepo interface {
@@ -29,9 +23,10 @@ type (
 	}
 
 	KodikWebAPI interface {
-		ResultsByKinopoiskID(id string) (entity.KodikAPI, error)
-		ResultsByShikimoriID(id string) (entity.KodikAPI, error)
-		ResultsByIMDbID(id string) (entity.KodikAPI, error)
-		ResultsByTitle(title string) (entity.KodikAPI, error)
+		SearchTitles(option, value string) (entity.KodikAPI, error)
+	}
+
+	UserPostgresRepo interface {
+		Create()
 	}
 )
