@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/bytedance/sonic v1.9.0
+	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/ilyakaznacheev/cleanenv v1.4.2
@@ -48,6 +49,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect

@@ -5,10 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/vgekko/ani-go/internal/usecase"
-	"go.uber.org/zap"
+	"golang.org/x/exp/slog"
 )
 
-func NewRouter(handler *gin.Engine, i usecase.Info, l usecase.Link, log *zap.Logger) {
+func NewRouter(handler *gin.Engine, i usecase.Info, l usecase.Link, log *slog.Logger) {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 	handler.Use(cors.New(cors.Config{
@@ -22,7 +22,11 @@ func NewRouter(handler *gin.Engine, i usecase.Info, l usecase.Link, log *zap.Log
 
 	v1 := handler.Group("/v1")
 	{
-		newInfoRoutes(v1, i, log)
-		newLinkRoutes(v1, l, log)
+		search := v1.Group("/search")
+		{
+			newInfoRoutes(search, i, log)
+			newLinkRoutes(search, l, log)
+		}
+
 	}
 }

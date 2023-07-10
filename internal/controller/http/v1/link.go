@@ -6,29 +6,26 @@ import (
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
 	"github.com/vgekko/ani-go/pkg/normalize"
-	"go.uber.org/zap"
+	"golang.org/x/exp/slog"
 	"net/http"
 	"net/url"
 )
 
 type linkRoutes struct {
 	uc usecase.Link
-	l  *zap.Logger
+	log  *slog.Logger
 }
 
-func newLinkRoutes(handler *gin.RouterGroup, uc usecase.Link, l *zap.Logger) {
-	r := &linkRoutes{uc: uc, l: l}
+func newLinkRoutes(handler *gin.RouterGroup, uc usecase.Link, log *slog.Logger) {
+	r := &linkRoutes{uc: uc, log: log}
 
-	h := handler.Group("/link")
-	{
-		h.GET("search", r.search)
-	}
+	handler.GET("/link", r.search)
 }
 
 func (r *linkRoutes) search(c *gin.Context) {
 	params, err := url.ParseQuery(c.Request.URL.RawQuery)
 	if err != nil {
-		r.l.Info("linkRoutes.search: " + err.Error())
+		r.log.Info("linkRoutes.search: " + err.Error())
 		c.JSON(http.StatusInternalServerError, "something went wrong")
 	}
 
@@ -37,7 +34,7 @@ func (r *linkRoutes) search(c *gin.Context) {
 	link, err := r.uc.Search(option, value)
 	if err != nil {
 		if errors.Is(err, apperror.ErrTitleNotFound) {
-			r.l.Info("linkRoutes.search: " + err.Error())
+			r.log.Info("linkRoutes.search: " + err.Error())
 			c.JSON(http.StatusNotFound, "title with given parameters not found")
 
 			return

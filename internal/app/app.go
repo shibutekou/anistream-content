@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/config"
 	v1 "github.com/vgekko/ani-go/internal/controller/http/v1"
@@ -9,22 +8,24 @@ import (
 	"github.com/vgekko/ani-go/internal/usecase/repo"
 	"github.com/vgekko/ani-go/internal/usecase/webapi"
 	"github.com/vgekko/ani-go/pkg/httpserver"
-	"github.com/vgekko/ani-go/pkg/logger"
+	"github.com/vgekko/ani-go/pkg/logger/sl"
 	"github.com/vgekko/ani-go/pkg/postgres"
 	"github.com/vgekko/ani-go/pkg/redis"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
-func Run(cfg *config.Config) {
-	l := logger.New()
+func Run() {
+	cfg := config.Load()
+
+	// initialize slog logger
+	log := sl.New(cfg.Env)
 
 	// initialize postgres
-	pg, err := postgres.New(cfg.PG.URL, postgres.MaxPoolSize(cfg.PG.PoolMax))
+	pg, err := postgres.New(cfg.Postgres.URL, postgres.MaxPoolSize(cfg.Postgres.PoolMax))
 	if err != nil {
-		l.Fatal("failed to connect to database: " + err.Error())
+		log.Error("failed to init postgres", sl.Err(err))
 	}
 	defer pg.Close()
 
@@ -32,12 +33,12 @@ func Run(cfg *config.Config) {
 	redisClient := redis.New()
 
 	// initialize usecases
-	infoUseCase := usecase.NewInfoUseCase(webapi.New(), repo.NewInfoRedis(redisClient, time.Hour*12))
+	infoUseCase := usecase.NewInfoUseCase(webapi.New(), repo.NewInfoRedis(redisClient, cfg.Redis.InfoCacheTTL))
 	linkUseCase := usecase.NewLinkUseCase(webapi.New())
 
 	// HTTP server
 	engine := gin.New()
-	v1.NewRouter(engine, infoUseCase, linkUseCase, l)
+	v1.NewRouter(engine, infoUseCase, linkUseCase, log)
 
 	httpServer := httpserver.New(engine)
 
@@ -47,14 +48,14 @@ func Run(cfg *config.Config) {
 
 	select {
 	case s := <-interrupt:
-		l.Info("app.Run: signal: " + s.String())
+		log.Info("app.Run: signal: " + s.String())
 	case err := <-httpServer.Notify():
-		l.Error(fmt.Errorf("app.Run: httpServer.Notify: %w", err).Error())
+		log.Error("app.Run: notify: ", sl.Err(err))
 	}
 
 	// shutdown
 	err = httpServer.Shutdown()
 	if err != nil {
-		l.Error(fmt.Errorf("app.Run: httpServer.Shutdown: %w", err).Error())
+		log.Error("app.Run: shutdown: ", sl.Err(err))
 	}
 }

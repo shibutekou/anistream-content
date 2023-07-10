@@ -1,39 +1,43 @@
 package config
 
 import (
-	"fmt"
 	"github.com/ilyakaznacheev/cleanenv"
+	"log"
+	"os"
+	"time"
 )
 
-type (
-	Config struct {
-		PG PG `yaml:"postgres"`
-		Redis Redis `yaml:"redis"`
+type Config struct {
+	Env string `yaml:"env" env-default:"local"`
+	Postgres `yaml:"postgres"`
+	Redis `yaml:"redis"`
+}
+
+type Postgres struct {
+	PoolMax int `yaml:"pool_max" env-default:"2"`
+	URL string `yaml:"url" env-required:"true"`
+}
+
+type Redis struct {
+	InfoCacheTTL time.Duration ` yaml:"info_cache_ttl" env-required:"true"`
+}
+
+func Load() *Config {
+	configPath := os.Getenv("CONFIG_PATH")
+	if configPath == "" {
+		log.Fatal("CONFIG_PATH is not set")
 	}
 
-	PG struct {
-		PoolMax int `env-required:"true" env:"PG_POOL_MAX" yaml:"pool_max"`
-		URL string `env-required:"true" env:"PG_URL"`
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		log.Fatalf("config file does not exist: %s", configPath)
 	}
 
-	Redis struct {
-		InfoCacheTTL int `env-required:"true" env:"INFO_CACHE_TTL" yaml:"info_cache_ttl"`
-	}
-)
+	var cfg Config
 
-func New() (*Config, error) {
-	cfg := &Config{}
-
-	err := cleanenv.ReadConfig("./config/config.yml", cfg)
-	if err != nil {
-		return nil, fmt.Errorf("config.NewConfig: %w", err)
+	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+		log.Fatalf("cannot read config: %s", err)
 	}
 
-	err = cleanenv.ReadEnv(cfg)
-	if err != nil {
-		return nil, err
-	}
-
-	return cfg, nil
+	return &cfg
 }
 
