@@ -30,6 +30,8 @@ dist/
 *.env
 config.yaml
 configs/config.yml
+local.yaml
+prod.yaml
 
 # Unit test reports
 TEST*.xml
