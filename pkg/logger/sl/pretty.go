@@ -3,12 +3,10 @@ package sl
 import (
 	"context"
 	"encoding/json"
-	"io"
-	stdlog "log"
-	"os"
-
 	"github.com/fatih/color"
 	"golang.org/x/exp/slog"
+	"io"
+	stdlog "log"
 )
 
 type PrettyHandler struct {
@@ -79,14 +77,14 @@ func (h *PrettyHandler) Handle(_ context.Context, r slog.Record) error {
 	return nil
 }
 
-func setupPrettySlog() *slog.Logger {
+func setupPrettySlog(output io.Writer) *slog.Logger {
 	opts := PrettyHandlerOptions{
 		SlogOpts: &slog.HandlerOptions{
 			Level: slog.LevelDebug,
 		},
 	}
 
-	handler := opts.NewPrettyHandler(os.Stdout)
+	handler := opts.NewPrettyHandler(output)
 
 	return slog.New(handler)
 }
