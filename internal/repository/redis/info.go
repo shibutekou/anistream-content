@@ -33,11 +33,7 @@ func (r *InfoRepo) Cache(ctx context.Context, key string, value entity.TitleInfo
 func (r *InfoRepo) Lookup(ctx context.Context, key string) bool {
 	data, _ := r.db.Exists(ctx, key).Result()
 
-	if data == notExists {
-		return false
-	}
-
-	return true
+	return data != notExists
 }
 
 func (r *InfoRepo) FromCache(ctx context.Context, key string) (entity.TitleInfos, error) {
