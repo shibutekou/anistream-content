@@ -38,7 +38,7 @@ type Results []struct {
 type TitleInfos []TitleInfo
 
 func (tis TitleInfos) MarshalBinary() (data []byte, err error) {
-	b, err := encoder.Encode(tis, encoder.CompactMarshaler)
+	b, _ := encoder.Encode(tis, encoder.CompactMarshaler)
 
 	return b, nil
 }
