@@ -19,7 +19,6 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 	}))
 
 	handler.Use(middleware.RequestID())
-	handler.Use(middleware.Slogger(log))
 
 	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
 

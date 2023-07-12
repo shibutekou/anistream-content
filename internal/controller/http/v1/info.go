@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
-	"github.com/vgekko/ani-go/pkg/logger/sl"
 	"github.com/vgekko/ani-go/pkg/normalize"
 	"golang.org/x/exp/slog"
 )
@@ -27,31 +26,27 @@ func newInfoRoutes(handler *gin.RouterGroup, uc usecase.Info, log *slog.Logger) 
 func (r *infoRoutes) search(c *gin.Context) {
 	params, err := url.ParseQuery(c.Request.URL.RawQuery)
 	if err != nil {
-		r.log.Error("infoRoutes.Search: ", sl.Err(err))
-		c.JSON(http.StatusInternalServerError, "something went wrong")
+		newErrorResponse(c, http.StatusBadRequest, err.Error(), r.log)
 		return
 	}
 
 	option, value, err := normalize.Params(params.Encode())
 	if err != nil {
-		r.log.Error("normalize.Params: ", sl.Err(err))
-		c.JSON(http.StatusBadRequest, "invalid search parameter")
+		newErrorResponse(c, http.StatusBadRequest, err.Error(), r.log)
 		return
 	}
 
 	titleInfos, err := r.uc.Search(option, value)
 	if err != nil {
 		if errors.Is(err, apperror.ErrTitleNotFound) {
-			//r.log.Warn("infoRoutes.Search: ", sl.Err(err))
-			//c.JSON(http.StatusNotFound, "title with given parameters not found")
-			errorResponse(c, "title with given parameters not found", http.StatusNotFound, r.log)
+			newErrorResponse(c, http.StatusNotFound, err.Error(), r.log)
 			return
 		}
 
-		r.log.Error("infoRoute.search: ", sl.Err(err))
-		c.JSON(http.StatusInternalServerError, "something went wrong")
+		newErrorResponse(c, http.StatusInternalServerError, err.Error(), r.log)
 		return
 	}
 
+	newSuccessResponse(c, http.StatusOK, r.log)
 	c.JSON(http.StatusOK, titleInfos)
 }

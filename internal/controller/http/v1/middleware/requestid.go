@@ -8,10 +8,9 @@ import (
 type (
 	Generator func() string
 	Handler   func(c *gin.Context, requestID string)
-    HeaderStrKey string
 )
 
-var headerXRequestID string
+var headerXRequestID = "X-Request-ID"
 
 // config defines the config for RequestID middleware
 type config struct {
@@ -21,7 +20,6 @@ type config struct {
 	// }
 	generator Generator
 	handler   Handler
-	headerKey HeaderStrKey
 }
 
 // RequestID initializes the RequestID middleware.
@@ -30,10 +28,7 @@ func RequestID() gin.HandlerFunc {
 		generator: func() string {
 			return uuid.New().String()
 		},
-		headerKey: "X-Request-ID",
 	}
-
-	headerXRequestID = string(cfg.headerKey)
 
 	return func(c *gin.Context) {
 		// Get id from request
@@ -45,13 +40,13 @@ func RequestID() gin.HandlerFunc {
 		if cfg.handler != nil {
 			cfg.handler(c, rid)
 		}
-		// Set the id to ensure that the requestid is in the response
+		// Set the id to ensure that the request_id is in the response
 		c.Header(headerXRequestID, rid)
 		c.Next()
 	}
 }
 
-// Get returns the request identifier
+// GetRequestID returns the request identifier
 func GetRequestID(c *gin.Context) string {
 	return c.GetHeader(headerXRequestID)
 }

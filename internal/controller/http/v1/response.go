@@ -6,8 +6,16 @@ import (
 	"golang.org/x/exp/slog"
 )
 
+type errorResponse struct {
+	Error string `json:"error"`
+}
+
+type successResponse struct {
+	Message string `json:"message"`
+}
+
 // TODO: подобрать красивое решение
-func errorResponse(c *gin.Context, message string, statusCode int, log *slog.Logger) {
+func newErrorResponse(c *gin.Context, statusCode int, message string, log *slog.Logger) {
 	log = log.With(
 		slog.String("method", c.Request.Method),
 		slog.Int("status", statusCode),
@@ -18,5 +26,18 @@ func errorResponse(c *gin.Context, message string, statusCode int, log *slog.Log
 	)
 
 	log.Error(message)
-	c.JSON(statusCode, message)
+	c.JSON(statusCode, errorResponse{message})
+}
+
+func newSuccessResponse(c *gin.Context, statusCode int, log *slog.Logger) {
+	log = log.With(
+		slog.String("method", c.Request.Method),
+		slog.Int("status", statusCode),
+		slog.String("path", c.Request.URL.Path),
+		slog.String("remote_addr", c.Request.RemoteAddr),
+		slog.String("user_agent", c.Request.UserAgent()),
+		slog.String("request_id", middleware.GetRequestID(c)),
+	)
+
+	log.Info("ok")
 }
