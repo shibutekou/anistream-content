@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+
 	"github.com/bytedance/sonic/encoder"
 )
 
@@ -23,7 +24,7 @@ type KodikAPI struct {
 }
 
 type Results []struct {
-	Link string `json:"link"`
+	Link        string   `json:"link"`
 	Title       string   `json:"title,omitempty"`
 	TitleOrig   string   `json:"title_orig,omitempty"`
 	OtherTitle  string   `json:"other_title"`

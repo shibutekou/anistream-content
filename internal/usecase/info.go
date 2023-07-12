@@ -3,19 +3,20 @@ package usecase
 import (
 	"context"
 	"fmt"
+
 	"github.com/vgekko/ani-go/internal/entity"
 	"github.com/vgekko/ani-go/internal/repository/redis"
 	"github.com/vgekko/ani-go/internal/webapi"
 )
 
 type InfoUseCase struct {
-	kodik webapi.Kodik
+	kodik    webapi.Kodik
 	infoRepo redis.Info
 }
 
 func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.Info) *InfoUseCase {
 	return &InfoUseCase{
-		kodik:   kodik,
+		kodik:    kodik,
 		infoRepo: infoRepo,
 	}
 }
@@ -75,4 +76,3 @@ func toTitleInfo(src entity.KodikAPI) []entity.TitleInfo {
 
 	return titleInfos
 }
-

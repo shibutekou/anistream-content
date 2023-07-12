@@ -3,11 +3,12 @@ package webapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/vgekko/ani-go/internal/entity"
-	"github.com/vgekko/ani-go/pkg/apperror"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/vgekko/ani-go/internal/entity"
+	"github.com/vgekko/ani-go/pkg/apperror"
 )
 
 type KodikWebAPI struct {

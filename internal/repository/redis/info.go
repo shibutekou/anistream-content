@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/redis/go-redis/v9"
 	"github.com/vgekko/ani-go/internal/entity"
-	"time"
 )
 
 const notExists = iota
 
 type InfoRepo struct {
-	db *redis.Client
+	db  *redis.Client
 	ttl time.Duration
 }
 
@@ -53,4 +54,3 @@ func (r *InfoRepo) FromCache(ctx context.Context, key string) (entity.TitleInfos
 
 	return ti, nil
 }
-

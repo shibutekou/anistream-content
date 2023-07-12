@@ -3,16 +3,17 @@ package sl
 import (
 	"context"
 	"encoding/json"
-	"github.com/fatih/color"
-	"golang.org/x/exp/slog"
 	"io"
 	stdlog "log"
 	"os"
+
+	"github.com/fatih/color"
+	"golang.org/x/exp/slog"
 )
 
 type PrettyHandler struct {
 	slog.Handler
-	l *stdlog.Logger
+	l     *stdlog.Logger
 	attrs []slog.Attr
 }
 

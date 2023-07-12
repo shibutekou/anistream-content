@@ -2,19 +2,20 @@ package v1
 
 import (
 	"errors"
+	"net/http"
+	"net/url"
+
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/pkg/apperror"
 	"github.com/vgekko/ani-go/pkg/logger/sl"
 	"github.com/vgekko/ani-go/pkg/normalize"
 	"golang.org/x/exp/slog"
-	"net/http"
-	"net/url"
 )
 
 type linkRoutes struct {
-	uc usecase.Link
-	log  *slog.Logger
+	uc  usecase.Link
+	log *slog.Logger
 }
 
 func newLinkRoutes(handler *gin.RouterGroup, uc usecase.Link, log *slog.Logger) {
@@ -53,5 +54,3 @@ func (r *linkRoutes) search(c *gin.Context) {
 
 	c.JSON(http.StatusOK, link)
 }
-
-

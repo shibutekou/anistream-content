@@ -1,28 +1,29 @@
 package sl
 
 import (
-	"golang.org/x/exp/slog"
 	"os"
+
+	"golang.org/x/exp/slog"
 )
 
 const (
 	EnvLocal = "local"
-	EnvProd = "prod"
+	EnvProd  = "prod"
 )
 
 func New(env string) *slog.Logger {
-	 var log *slog.Logger
+	var log *slog.Logger
 
-	 switch env {
-	 case EnvLocal:
-		 log = setupPrettySlog()
-	 case EnvProd:
-		 log = slog.New(
-			 slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
-		 )
-	 }
+	switch env {
+	case EnvLocal:
+		log = setupPrettySlog()
+	case EnvProd:
+		log = slog.New(
+			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
+		)
+	}
 
-	 return log
+	return log
 }
 
 func Err(err error) slog.Attr {

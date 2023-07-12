@@ -1,7 +1,12 @@
 package app
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/gin-gonic/gin"
+
 	"github.com/vgekko/ani-go/config"
 	v1 "github.com/vgekko/ani-go/internal/controller/http/v1"
 	postgresRepository "github.com/vgekko/ani-go/internal/repository/postgres"
@@ -12,9 +17,6 @@ import (
 	"github.com/vgekko/ani-go/pkg/logger/sl"
 	"github.com/vgekko/ani-go/pkg/postgresql"
 	redisClient "github.com/vgekko/ani-go/pkg/redis"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func Run() {
@@ -48,7 +50,8 @@ func Run() {
 	engine := gin.New()
 	v1.NewRouter(engine, useCase, log)
 
-	httpServer := httpserver.New(engine)
+	log.Info("starting http server")
+	httpServer := httpserver.Start(engine)
 
 	// waiting signal
 	interrupt := make(chan os.Signal, 1)

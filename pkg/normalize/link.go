@@ -2,8 +2,9 @@ package normalize
 
 import (
 	"fmt"
-	"golang.org/x/exp/slices"
 	"strings"
+
+	"golang.org/x/exp/slices"
 )
 
 var validParams = []string{"kinopoisk_id", "shikimori_id", "imdb_id", "worldart_id"}

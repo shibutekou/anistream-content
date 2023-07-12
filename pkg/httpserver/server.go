@@ -19,7 +19,7 @@ type Server struct {
 	shutdownTimeout time.Duration
 }
 
-func New(handler http.Handler) *Server {
+func Start(handler http.Handler) *Server {
 	httpServer := &http.Server{
 		Addr:         defaultAddr,
 		ReadTimeout:  defaultReadTimeout,

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+
 	"github.com/vgekko/ani-go/internal/webapi"
 	"github.com/vgekko/ani-go/pkg/normalize"
 )

@@ -12,10 +12,10 @@ import (
 func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 	handler.Use(gin.Recovery())
 	handler.Use(cors.New(cors.Config{
-		AllowAllOrigins:        true,
-		AllowMethods:           []string{"PUT", "PATCH", "POST", "DELETE", "GET"},
-		AllowHeaders:           []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
-		AllowCredentials:       true,
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "DELETE", "GET"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Accept-Encoding"},
+		AllowCredentials: true,
 	}))
 
 	handler.Use(middleware.RequestID())
@@ -30,7 +30,7 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 		search := v1.Group("/search")
 		{
 			newInfoRoutes(search, uc.Info, log)
-			newLinkRoutes(search,uc.Link, log)
+			newLinkRoutes(search, uc.Link, log)
 		}
 
 	}

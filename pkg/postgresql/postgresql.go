@@ -3,11 +3,12 @@ package postgresql
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/vgekko/ani-go/config"
 	"golang.org/x/exp/slog"
-	"log"
-	"time"
 )
 
 func NewPool(cfg config.Postgres) (*pgxpool.Pool, error) {
@@ -44,6 +45,6 @@ func NewPool(cfg config.Postgres) (*pgxpool.Pool, error) {
 		return nil, fmt.Errorf("postgresql.NewPool.connAttempts == 0: %w", err)
 	}
 
-	slog.Info("connected to postgresql database: ", cfg.Database)
+	slog.Info("connected to postgresql: ", slog.Attr{Key: "database", Value: slog.StringValue(cfg.Database)})
 	return pool, nil
 }
