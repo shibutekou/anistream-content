@@ -15,7 +15,7 @@ type KodikWebAPI struct {
 	client http.Client
 }
 
-func New() *KodikWebAPI {
+func NewKodikWebAPI() *KodikWebAPI {
 	token := os.Getenv("KODIK_TOKEN")
 	client := http.Client{Timeout: time.Second * 3}
 

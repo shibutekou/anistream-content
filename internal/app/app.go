@@ -4,13 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/ani-go/config"
 	v1 "github.com/vgekko/ani-go/internal/controller/http/v1"
+	postgresRepository "github.com/vgekko/ani-go/internal/repository/postgres"
+	redisRepository "github.com/vgekko/ani-go/internal/repository/redis"
 	"github.com/vgekko/ani-go/internal/usecase"
-	"github.com/vgekko/ani-go/internal/usecase/repo"
-	"github.com/vgekko/ani-go/internal/usecase/webapi"
+	"github.com/vgekko/ani-go/internal/webapi"
 	"github.com/vgekko/ani-go/pkg/httpserver"
 	"github.com/vgekko/ani-go/pkg/logger/sl"
-	"github.com/vgekko/ani-go/pkg/postgres"
-	"github.com/vgekko/ani-go/pkg/redis"
+	"github.com/vgekko/ani-go/pkg/postgresql"
+	redisClient "github.com/vgekko/ani-go/pkg/redis"
 	"os"
 	"os/signal"
 	"syscall"
@@ -22,23 +23,30 @@ func Run() {
 	// initialize slog logger
 	log := sl.New(cfg.Env)
 
-	// initialize postgres
-	pg, err := postgres.New(cfg.Postgres.URL, postgres.MaxPoolSize(cfg.Postgres.PoolMax))
+	// initialize postgresql
+	pool, err := postgresql.NewPool(cfg.Postgres)
 	if err != nil {
-		log.Error("failed to init postgres", sl.Err(err))
+		log.Error("failed to init postgresql", sl.Err(err))
 	}
-	defer pg.Close()
+	defer pool.Close()
 
 	// initialize redis
-	redisClient := redis.New()
+	redis := redisClient.NewClient(cfg.Redis)
+	defer redis.Close()
+
+	// web api
+	webAPI := webapi.NewWebAPI()
+
+	// repositories
+	redisRepo := redisRepository.NewRepositoryRedis(redis, cfg.Redis)
+	postgresRepo := postgresRepository.NewRepositoryPostgres(pool)
 
 	// initialize usecases
-	infoUseCase := usecase.NewInfoUseCase(webapi.New(), repo.NewInfoRedis(redisClient, cfg.Redis.InfoCacheTTL))
-	linkUseCase := usecase.NewLinkUseCase(webapi.New())
+	useCase := usecase.NewUseCase(redisRepo, postgresRepo, webAPI)
 
 	// HTTP server
 	engine := gin.New()
-	v1.NewRouter(engine, infoUseCase, linkUseCase, log)
+	v1.NewRouter(engine, useCase, log)
 
 	httpServer := httpserver.New(engine)
 

@@ -4,17 +4,19 @@ import (
 	"context"
 	"fmt"
 	"github.com/vgekko/ani-go/internal/entity"
+	"github.com/vgekko/ani-go/internal/repository/redis"
+	"github.com/vgekko/ani-go/internal/webapi"
 )
 
 type InfoUseCase struct {
-	webAPI KodikWebAPI
-	redisRepo InfoRedisRepo
+	kodik webapi.Kodik
+	infoRepo redis.Info
 }
 
-func NewInfoUseCase(w KodikWebAPI, r InfoRedisRepo) *InfoUseCase {
+func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.Info) *InfoUseCase {
 	return &InfoUseCase{
-		webAPI: w,
-		redisRepo: r,
+		kodik:   kodik,
+		infoRepo: infoRepo,
 	}
 }
 
@@ -28,8 +30,8 @@ func (uc *InfoUseCase) Search(option, value string) (entity.TitleInfos, error) {
 	cacheKey := fmt.Sprintf("%s%s", option, value)
 
 	// if data exists in cache, take it form there
-	if exists := uc.redisRepo.Lookup(ctx, cacheKey); exists {
-		titleInfos, err = uc.redisRepo.FromCache(ctx, cacheKey)
+	if exists := uc.infoRepo.Lookup(ctx, cacheKey); exists {
+		titleInfos, err = uc.infoRepo.FromCache(ctx, cacheKey)
 		if err != nil {
 			return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
 		}
@@ -38,7 +40,7 @@ func (uc *InfoUseCase) Search(option, value string) (entity.TitleInfos, error) {
 	}
 
 	// if data does not exists in cache
-	results, err := uc.webAPI.SearchTitles(option, value)
+	results, err := uc.kodik.SearchTitles(option, value)
 	if err != nil {
 		return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
 	}
@@ -46,7 +48,7 @@ func (uc *InfoUseCase) Search(option, value string) (entity.TitleInfos, error) {
 	titleInfos = toTitleInfo(results)
 
 	// save data in cache
-	err = uc.redisRepo.Cache(ctx, cacheKey, titleInfos)
+	err = uc.infoRepo.Cache(ctx, cacheKey, titleInfos)
 	if err != nil {
 		return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
 	}

@@ -15,9 +15,7 @@ func New(env string) *slog.Logger {
 
 	 switch env {
 	 case EnvLocal:
-		 log = slog.New(
-			 slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
-		 )
+		 log = setupPrettySlog()
 	 case EnvProd:
 		 log = slog.New(
 			 slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),

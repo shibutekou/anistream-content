@@ -1,27 +1,26 @@
 package redis
 
 import (
+	"context"
 	"github.com/redis/go-redis/v9"
+	"github.com/vgekko/ani-go/config"
+	"golang.org/x/exp/slog"
 )
 
-const cacheDB = iota
+const dbCache = 0
 
-type Redis struct {
-	RedisClient *redis.Client
-}
-
-func New() *Redis {
+func NewClient(cfg config.Redis) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:                  "localhost:6379",
+		Addr:                  cfg.Addr,
 		Password:              "",
-		DB:                    cacheDB,
+		DB:                    dbCache,
 	})
 
-	return &Redis{RedisClient: rdb}
-}
 
-func (r *Redis) Close() {
-	if r.RedisClient != nil {
-		r.RedisClient.Close()
-	}
+	red := slog.String("redis", "connected")
+	dat := slog.Int("database", dbCache)
+	slog.LogAttrs(context.Background(), slog.LevelInfo, "redis", red, dat)
+
+
+	return rdb
 }
