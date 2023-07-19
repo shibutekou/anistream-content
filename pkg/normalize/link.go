@@ -18,6 +18,6 @@ func Params(l string) (string, string, error) {
 	return x[0], x[1], nil
 }
 
-func Link(link string) string {
+func URL(link string) string {
 	return fmt.Sprintf("http://%s", strings.TrimLeft(link, "/"))
 }

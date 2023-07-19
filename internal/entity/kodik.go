@@ -1,11 +1,5 @@
 package entity
 
-import (
-	"encoding/json"
-
-	"github.com/bytedance/sonic/encoder"
-)
-
 type TitleInfo struct {
 	Title       string   `json:"title,omitempty"`
 	TitleOrig   string   `json:"title_orig,omitempty"`
@@ -15,6 +9,15 @@ type TitleInfo struct {
 	ShikimoriID string   `json:"shikimori_id,omitempty"`
 	IMDbID      string   `json:"imdb_id,omitempty"`
 	Screenshots []string `json:"screenshots,omitempty"`
+}
+
+type Link struct {
+	URL string `json:"url"`
+}
+
+type TitleFilter struct {
+	Option string
+	Value string
 }
 
 type KodikAPI struct {
@@ -33,16 +36,4 @@ type Results []struct {
 	ShikimoriID string   `json:"shikimori_id,omitempty"`
 	IMDbID      string   `json:"imdb_id,omitempty"`
 	Screenshots []string `json:"screenshots"`
-}
-
-type TitleInfos []TitleInfo
-
-func (tis TitleInfos) MarshalBinary() (data []byte, err error) {
-	b, _ := encoder.Encode(tis, encoder.CompactMarshaler)
-
-	return b, nil
-}
-
-func (tis TitleInfos) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, &tis)
 }

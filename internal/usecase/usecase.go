@@ -22,11 +22,11 @@ func NewUseCase(redis *redis.RepositoryRedis, postgres *postgres.RepositoryPostg
 }
 
 type Link interface {
-	Search(option, value string) (string, error)
+	Search(filter entity.TitleFilter) (entity.Link, error)
 }
 
 type Info interface {
-	Search(option, value string) (entity.TitleInfos, error)
+	Search(filter entity.TitleFilter) ([]entity.TitleInfo, error)
 }
 
 type Auth interface {

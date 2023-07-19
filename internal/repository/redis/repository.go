@@ -20,6 +20,6 @@ func NewRepositoryRedis(redis *redis.Client, cfg config.Redis) *RepositoryRedis 
 
 type Info interface {
 	Lookup(ctx context.Context, key string) bool
-	FromCache(ctx context.Context, key string) (entity.TitleInfos, error)
-	Cache(ctx context.Context, key string, value entity.TitleInfos) error
+	FromCache(ctx context.Context, key string) ([]entity.TitleInfo, error)
+	Cache(ctx context.Context, key string, value []entity.TitleInfo) error
 }

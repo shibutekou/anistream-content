@@ -1,9 +1,11 @@
 package v1
 
 import (
+	graphqlhandler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/vgekko/ani-go/graph"
 	"github.com/vgekko/ani-go/internal/controller/http/v1/middleware"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"golang.org/x/exp/slog"
@@ -24,6 +26,8 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 
 	v1 := handler.Group("/v1")
 	{
+		v1.POST("/graphql", graphqlHandler(uc, log))
+
 		newAuthRoutes(v1, uc.Auth, log)
 
 		search := v1.Group("/search")
@@ -32,5 +36,13 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 			newLinkRoutes(search, uc.Link, log)
 		}
 
+	}
+}
+
+func graphqlHandler(uc *usecase.UseCase, log *slog.Logger) gin.HandlerFunc {
+	h := graphqlhandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{Uc: uc, Log: log}}))
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
 	}
 }

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"fmt"
+	"github.com/vgekko/ani-go/internal/entity"
 
 	"github.com/vgekko/ani-go/internal/webapi"
 	"github.com/vgekko/ani-go/pkg/normalize"
@@ -15,12 +16,15 @@ func NewLinkUseCase(kodik webapi.Kodik) *LinkUseCase {
 	return &LinkUseCase{kodik: kodik}
 }
 
-func (l *LinkUseCase) Search(option, value string) (string, error) {
-	results, err := l.kodik.SearchTitles(option, value)
+func (l *LinkUseCase) Search(filter entity.TitleFilter) (entity.Link, error) {
+	results, err := l.kodik.SearchTitles(filter.Option, filter.Value)
 	if err != nil {
-		return "", fmt.Errorf("LinkUseCase.Search: %w", err)
+		return entity.Link{}, fmt.Errorf("LinkUseCase.Search: %w", err)
 	}
 
-	link := normalize.Link(results.Results[0].Link)
+	url := normalize.URL(results.Results[0].Link)
+
+	link := entity.Link{URL: url}
+
 	return link, nil
 }

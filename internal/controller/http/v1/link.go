@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"github.com/vgekko/ani-go/internal/entity"
 	"net/http"
 	"net/url"
 
@@ -36,7 +37,9 @@ func (r *linkRoutes) search(c *gin.Context) {
 		return
 	}
 
-	link, err := r.uc.Search(option, value)
+	filter := entity.TitleFilter{Option: option, Value: value}
+
+	link, err := r.uc.Search(filter)
 	if err != nil {
 		if errors.Is(err, apperror.ErrTitleNotFound) {
 			newErrorResponse(c, http.StatusNotFound, err.Error(), r.log)

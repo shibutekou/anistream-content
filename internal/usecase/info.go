@@ -21,14 +21,16 @@ func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.Info) *InfoUseCase {
 	}
 }
 
-func (uc *InfoUseCase) Search(option, value string) (entity.TitleInfos, error) {
+func (uc *InfoUseCase) Search(filter entity.TitleFilter) ([]entity.TitleInfo, error) {
 	ctx := context.Background()
 
-	var titleInfos entity.TitleInfos
+
+
+	var titleInfos = make([]entity.TitleInfo, 0)
 	var err error
 
 	// check the cache
-	cacheKey := fmt.Sprintf("%s%s", option, value)
+	cacheKey := fmt.Sprintf("%s%s", filter.Option, filter.Value)
 
 	// if data exists in cache, take it form there
 	if exists := uc.infoRepo.Lookup(ctx, cacheKey); exists {
@@ -41,7 +43,7 @@ func (uc *InfoUseCase) Search(option, value string) (entity.TitleInfos, error) {
 	}
 
 	// if data does not exists in cache
-	results, err := uc.kodik.SearchTitles(option, value)
+	results, err := uc.kodik.SearchTitles(filter.Option, filter.Value)
 	if err != nil {
 		return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
 	}
