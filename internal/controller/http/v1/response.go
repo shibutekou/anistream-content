@@ -10,10 +10,6 @@ type errorResponse struct {
 	Error string `json:"error"`
 }
 
-type successResponse struct {
-	Message string `json:"message"`
-}
-
 // TODO: подобрать красивое решение
 func newErrorResponse(c *gin.Context, statusCode int, message string, log *slog.Logger) {
 	log = log.With(

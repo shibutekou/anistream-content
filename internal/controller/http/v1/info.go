@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"github.com/vgekko/ani-go/internal/entity"
 	"net/http"
 	"net/url"
 
@@ -14,11 +13,11 @@ import (
 )
 
 type infoRoutes struct {
-	uc  usecase.Info
+	uc  usecase.InfoUseCase
 	log *slog.Logger
 }
 
-func newInfoRoutes(handler *gin.RouterGroup, uc usecase.Info, log *slog.Logger) {
+func newInfoRoutes(handler *gin.RouterGroup, uc usecase.InfoUseCase, log *slog.Logger) {
 	r := &infoRoutes{uc: uc, log: log}
 
 	handler.GET("/info", r.search)
@@ -31,13 +30,11 @@ func (r *infoRoutes) search(c *gin.Context) {
 		return
 	}
 
-	option, value, err := normalize.Params(params.Encode())
+	filter, err := normalize.FilterParams(params.Encode())
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error(), r.log)
 		return
 	}
-
-	filter := entity.TitleFilter{Option: option, Value: value}
 
 	titleInfos, err := r.uc.Search(filter)
 	if err != nil {

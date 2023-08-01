@@ -2,20 +2,21 @@ package normalize
 
 import (
 	"fmt"
+	"github.com/vgekko/ani-go/internal/entity"
 	"strings"
 
 	"golang.org/x/exp/slices"
 )
 
-var validParams = []string{"kinopoisk_id", "shikimori_id", "imdb_id", "worldart_id"}
+var validFilterParams = []string{"kinopoisk_id", "shikimori_id", "imdb_id", "worldart_id"}
 
-func Params(l string) (string, string, error) {
-	x := strings.Split(l, "=")
-	if !slices.Contains(validParams, x[0]) {
-		return "", "", fmt.Errorf("invalid search parameter")
+func FilterParams(urlParams string) (entity.TitleFilter, error) {
+	x := strings.Split(urlParams, "=")
+	if !slices.Contains(validFilterParams, x[0]) {
+		return entity.TitleFilter{}, fmt.Errorf("invalid search parameter")
 	}
 
-	return x[0], x[1], nil
+	return entity.TitleFilter{Option: x[0], Value:  x[1]}, nil
 }
 
 func URL(link string) string {

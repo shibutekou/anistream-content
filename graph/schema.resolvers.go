@@ -21,7 +21,7 @@ func (r *queryResolver) TitleInfos(ctx context.Context, filter model.TitleFilter
 		Value:  filter.ID,
 	}
 
-	titleInfos, err := r.Uc.Info.Search(internalFilter)
+	titleInfos, err := r.Uc.InfoUseCase.Search(internalFilter)
 	if err != nil {
 		r.Log.Error("graphql: ", sl.Err(err))
 		return nil, err
@@ -41,7 +41,7 @@ func (r *queryResolver) Link(ctx context.Context, filter model.TitleFilter) (*mo
 		Value:  filter.ID,
 	}
 
-	link, err := r.Uc.Link.Search(internalFilter)
+	link, err := r.Uc.LinkUseCase.Search(internalFilter)
 	if err != nil {
 		r.Log.Error("graphql: ", sl.Err(err))
 		return nil, err

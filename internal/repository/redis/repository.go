@@ -9,17 +9,18 @@ import (
 )
 
 type RepositoryRedis struct {
-	Info
+	InfoRepository
 }
 
 func NewRepositoryRedis(redis *redis.Client, cfg config.Redis) *RepositoryRedis {
 	return &RepositoryRedis{
-		Info: NewInfoRepo(redis, cfg.InfoCacheTTL),
+		InfoRepository: NewInfoRepository(redis, cfg.InfoCacheTTL),
 	}
 }
 
-type Info interface {
-	Lookup(ctx context.Context, key string) bool
+type InfoRepository interface {
+	Lookup(ctx context.Context, key string) (bool, error)
 	FromCache(ctx context.Context, key string) ([]entity.TitleInfo, error)
 	Cache(ctx context.Context, key string, value []entity.TitleInfo) error
+	Healthcheck(ctx context.Context) bool
 }

@@ -11,6 +11,8 @@ import (
 	"github.com/vgekko/ani-go/pkg/apperror"
 )
 
+const baseURLSearch = "https://kodikapi.com/search?"
+
 type KodikWebAPI struct {
 	token  string
 	client http.Client
@@ -26,7 +28,7 @@ func NewKodikWebAPI() *KodikWebAPI {
 func (k *KodikWebAPI) SearchTitles(option, value string) (entity.KodikAPI, error) {
 	var kodikResponse entity.KodikAPI
 
-	url := fmt.Sprintf("https://kodikapi.com/search?token=%s&%s=%s", k.token, option, value)
+	url := fmt.Sprintf("%stoken=%s&%s=%s", baseURLSearch, k.token, option, value)
 
 	resp, err := k.client.Get(url)
 	if err != nil {

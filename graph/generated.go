@@ -94,7 +94,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "Link.url":
+	case "LinkUseCase.url":
 		if e.complexity.Link.URL == nil {
 			break
 		}
@@ -421,7 +421,7 @@ func (ec *executionContext) _Link_url(ctx context.Context, field graphql.Collect
 
 func (ec *executionContext) fieldContext_Link_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Link",
+		Object:     "LinkUseCase",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -474,7 +474,7 @@ func (ec *executionContext) fieldContext_LinkPayload_link(ctx context.Context, f
 			case "url":
 				return ec.fieldContext_Link_url(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Link", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type LinkUseCase", field.Name)
 		},
 	}
 	return fc, nil
@@ -2960,7 +2960,7 @@ func (ec *executionContext) unmarshalInputTitleFilter(ctx context.Context, obj i
 
 // region    **************************** object.gotpl ****************************
 
-var linkImplementors = []string{"Link"}
+var linkImplementors = []string{"LinkUseCase"}
 
 func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj *entity.Link) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, linkImplementors)
@@ -2970,7 +2970,7 @@ func (ec *executionContext) _Link(ctx context.Context, sel ast.SelectionSet, obj
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Link")
+			out.Values[i] = graphql.MarshalString("LinkUseCase")
 		case "url":
 			out.Values[i] = ec._Link_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

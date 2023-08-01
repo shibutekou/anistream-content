@@ -9,13 +9,11 @@ import (
 
 	"github.com/vgekko/ani-go/config"
 	v1 "github.com/vgekko/ani-go/internal/controller/http/v1"
-	postgresRepository "github.com/vgekko/ani-go/internal/repository/postgres"
 	redisRepository "github.com/vgekko/ani-go/internal/repository/redis"
 	"github.com/vgekko/ani-go/internal/usecase"
 	"github.com/vgekko/ani-go/internal/webapi"
 	"github.com/vgekko/ani-go/pkg/httpserver"
 	"github.com/vgekko/ani-go/pkg/logger/sl"
-	"github.com/vgekko/ani-go/pkg/postgresql"
 	redisClient "github.com/vgekko/ani-go/pkg/redis"
 )
 
@@ -24,13 +22,6 @@ func Run() {
 
 	// initialize slog logger
 	log := sl.New(cfg.Env)
-
-	// initialize postgresql
-	pool, err := postgresql.NewPool(cfg.Postgres)
-	if err != nil {
-		log.Error("failed to init postgresql", sl.Err(err))
-	}
-	defer pool.Close()
 
 	// initialize redis
 	redis := redisClient.NewClient(cfg.Redis)
@@ -41,10 +32,9 @@ func Run() {
 
 	// repositories
 	redisRepo := redisRepository.NewRepositoryRedis(redis, cfg.Redis)
-	postgresRepo := postgresRepository.NewRepositoryPostgres(pool)
 
 	// initialize usecases
-	useCase := usecase.NewUseCase(redisRepo, postgresRepo, webAPI)
+	useCase := usecase.NewUseCase(redisRepo, webAPI)
 
 	// HTTP server
 	engine := gin.New()
@@ -65,7 +55,7 @@ func Run() {
 	}
 
 	// shutdown
-	err = httpServer.Shutdown()
+	err := httpServer.Shutdown()
 	if err != nil {
 		log.Error("app.Run: shutdown: ", sl.Err(err))
 	}

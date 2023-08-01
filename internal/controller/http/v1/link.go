@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"github.com/vgekko/ani-go/internal/entity"
 	"net/http"
 	"net/url"
 
@@ -14,11 +13,11 @@ import (
 )
 
 type linkRoutes struct {
-	uc  usecase.Link
+	uc  usecase.LinkUseCase
 	log *slog.Logger
 }
 
-func newLinkRoutes(handler *gin.RouterGroup, uc usecase.Link, log *slog.Logger) {
+func newLinkRoutes(handler *gin.RouterGroup, uc usecase.LinkUseCase, log *slog.Logger) {
 	r := &linkRoutes{uc: uc, log: log}
 
 	handler.GET("/link", r.search)
@@ -31,13 +30,11 @@ func (r *linkRoutes) search(c *gin.Context) {
 		return
 	}
 
-	option, value, err := normalize.Params(params.Encode())
+	filter, err := normalize.FilterParams(params.Encode())
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error(), r.log)
 		return
 	}
-
-	filter := entity.TitleFilter{Option: option, Value: value}
 
 	link, err := r.uc.Search(filter)
 	if err != nil {

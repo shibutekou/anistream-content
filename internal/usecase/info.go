@@ -3,57 +3,65 @@ package usecase
 import (
 	"context"
 	"fmt"
-
 	"github.com/vgekko/ani-go/internal/entity"
 	"github.com/vgekko/ani-go/internal/repository/redis"
 	"github.com/vgekko/ani-go/internal/webapi"
 )
 
-type InfoUseCase struct {
+type InfoUseCaseImpl struct {
 	kodik    webapi.Kodik
-	infoRepo redis.Info
+	infoRepo redis.InfoRepository
 }
 
-func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.Info) *InfoUseCase {
-	return &InfoUseCase{
+func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.InfoRepository) *InfoUseCaseImpl {
+	return &InfoUseCaseImpl{
 		kodik:    kodik,
 		infoRepo: infoRepo,
 	}
 }
 
-func (uc *InfoUseCase) Search(filter entity.TitleFilter) ([]entity.TitleInfo, error) {
+func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo, error) {
+	op := "InfoUseCase.Search"
 	ctx := context.Background()
-
-
 
 	var titleInfos = make([]entity.TitleInfo, 0)
 	var err error
 
-	// check the cache
-	cacheKey := fmt.Sprintf("%s%s", filter.Option, filter.Value)
+	// check the cache if cache database is available
+	// if data exists in cache, take it from there
+	redisAvailable := uc.infoRepo.Healthcheck(ctx)
+	key := fmt.Sprintf("%s:%s", filter.Option, filter.Value)
 
-	// if data exists in cache, take it form there
-	if exists := uc.infoRepo.Lookup(ctx, cacheKey); exists {
-		titleInfos, err = uc.infoRepo.FromCache(ctx, cacheKey)
+	if redisAvailable {
+		exists, err := uc.infoRepo.Lookup(ctx, key)
 		if err != nil {
-			return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
-		return titleInfos, nil
+		if exists {
+			titleInfos, err = uc.infoRepo.FromCache(ctx, key)
+			if err != nil {
+				return nil, fmt.Errorf("%s: %w", op, err)
+			}
+
+			return titleInfos, nil
+		}
 	}
 
 	// if data does not exists in cache
 	results, err := uc.kodik.SearchTitles(filter.Option, filter.Value)
 	if err != nil {
-		return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	titleInfos = toTitleInfo(results)
 
 	// save data in cache
-	err = uc.infoRepo.Cache(ctx, cacheKey, titleInfos)
-	if err != nil {
-		return nil, fmt.Errorf("InfoUseCase.Search: %w", err)
+	if redisAvailable {
+		err = uc.infoRepo.Cache(ctx, key, titleInfos)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
 	}
 
 	return titleInfos, nil

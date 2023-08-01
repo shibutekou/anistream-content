@@ -28,12 +28,10 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 	{
 		v1.POST("/graphql", graphqlHandler(uc, log))
 
-		newAuthRoutes(v1, uc.Auth, log)
-
 		search := v1.Group("/search")
 		{
-			newInfoRoutes(search, uc.Info, log)
-			newLinkRoutes(search, uc.Link, log)
+			newInfoRoutes(search, uc.InfoUseCase, log)
+			newLinkRoutes(search, uc.LinkUseCase, log)
 		}
 
 	}

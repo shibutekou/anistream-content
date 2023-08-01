@@ -2,33 +2,26 @@ package usecase
 
 import (
 	"github.com/vgekko/ani-go/internal/entity"
-	"github.com/vgekko/ani-go/internal/repository/postgres"
 	"github.com/vgekko/ani-go/internal/repository/redis"
 	"github.com/vgekko/ani-go/internal/webapi"
 )
 
 type UseCase struct {
-	Link
-	Info
-	Auth
+	LinkUseCase
+	InfoUseCase
 }
 
-func NewUseCase(redis *redis.RepositoryRedis, postgres *postgres.RepositoryPostgres, kodik *webapi.WebAPI) *UseCase {
+func NewUseCase(redis *redis.RepositoryRedis, kodik *webapi.WebAPI) *UseCase {
 	return &UseCase{
-		Link: NewLinkUseCase(kodik),
-		Info: NewInfoUseCase(kodik, redis.Info),
-		Auth: NewAuthUseCase(postgres.Auth),
+		LinkUseCase: NewLinkUseCase(kodik),
+		InfoUseCase: NewInfoUseCase(kodik, redis.InfoRepository),
 	}
 }
 
-type Link interface {
+type LinkUseCase interface {
 	Search(filter entity.TitleFilter) (entity.Link, error)
 }
 
-type Info interface {
+type InfoUseCase interface {
 	Search(filter entity.TitleFilter) ([]entity.TitleInfo, error)
-}
-
-type Auth interface {
-	SignUp()
 }

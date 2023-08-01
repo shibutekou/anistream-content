@@ -65,3 +65,7 @@ static
 
 # Directory for linter reports
 .reports
+
+# Profiler files
+*.pro
+*.pprof

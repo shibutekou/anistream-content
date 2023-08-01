@@ -8,18 +8,20 @@ import (
 	"github.com/vgekko/ani-go/pkg/normalize"
 )
 
-type LinkUseCase struct {
+type LinkUseCaseImpl struct {
 	kodik webapi.Kodik
 }
 
-func NewLinkUseCase(kodik webapi.Kodik) *LinkUseCase {
-	return &LinkUseCase{kodik: kodik}
+func NewLinkUseCase(kodik webapi.Kodik) *LinkUseCaseImpl {
+	return &LinkUseCaseImpl{kodik: kodik}
 }
 
-func (l *LinkUseCase) Search(filter entity.TitleFilter) (entity.Link, error) {
+func (l *LinkUseCaseImpl) Search(filter entity.TitleFilter) (entity.Link, error) {
+	op := "LinkUseCase.Search"
+
 	results, err := l.kodik.SearchTitles(filter.Option, filter.Value)
 	if err != nil {
-		return entity.Link{}, fmt.Errorf("LinkUseCase.Search: %w", err)
+		return entity.Link{}, fmt.Errorf("%s: %w", op, err)
 	}
 
 	url := normalize.URL(results.Results[0].Link)
