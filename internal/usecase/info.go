@@ -24,7 +24,7 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 	op := "InfoUseCase.Search"
 	ctx := context.Background()
 
-	var titleInfos = make([]entity.TitleInfo, 0)
+	var titleInfos []entity.TitleInfo
 	var err error
 
 	// check the cache if cache database is available
