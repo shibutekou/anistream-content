@@ -66,7 +66,7 @@ struct_fields_always_pointers: false
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "github.com/vgekko/ani-go/graph/model"
+#  - "github.com/vgekko/anistream/graph/model"
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -87,10 +87,10 @@ models:
       - github.com/99designs/gqlgen/graphql.Int32
   TitleInfo:
     model:
-      - github.com/vgekko/ani-go/internal/entity.TitleInfo
+      - github.com/vgekko/anistream/internal/entity.TitleInfo
   Link:
     model:
-      - github.com/vgekko/ani-go/internal/entity.Link
+      - github.com/vgekko/anistream/internal/entity.Link
 #  TitleFilter:
 #    model:
-#      - github.com/vgekko/ani-go/internal/entity.TitleFilter
+#      - github.com/vgekko/anistream/internal/entity.TitleFilter

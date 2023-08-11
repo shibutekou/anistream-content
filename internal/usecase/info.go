@@ -9,14 +9,14 @@ import (
 )
 
 type InfoUseCaseImpl struct {
-	kodik    webapi.Kodik
-	infoRepo redis.InfoRepository
+	kodik          webapi.Kodik
+	infoRepository redis.InfoRepository
 }
 
-func NewInfoUseCase(kodik webapi.Kodik, infoRepo redis.InfoRepository) *InfoUseCaseImpl {
+func NewInfoUseCase(kodik webapi.Kodik, infoRepository redis.InfoRepository) *InfoUseCaseImpl {
 	return &InfoUseCaseImpl{
-		kodik:    kodik,
-		infoRepo: infoRepo,
+		kodik:          kodik,
+		infoRepository: infoRepository,
 	}
 }
 
@@ -29,17 +29,17 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 
 	// check the cache if cache database is available
 	// if data exists in cache, take it from there
-	redisAvailable := uc.infoRepo.Healthcheck(ctx)
+	redisAvailable := uc.infoRepository.Healthcheck(ctx)
 	key := fmt.Sprintf("%s:%s", filter.Option, filter.Value)
 
 	if redisAvailable {
-		exists, err := uc.infoRepo.Lookup(ctx, key)
+		exists, err := uc.infoRepository.Lookup(ctx, key)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
 
 		if exists {
-			titleInfos, err = uc.infoRepo.FromCache(ctx, key)
+			titleInfos, err = uc.infoRepository.FromCache(ctx, key)
 			if err != nil {
 				return nil, fmt.Errorf("%s: %w", op, err)
 			}
@@ -58,7 +58,7 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 
 	// save data in cache
 	if redisAvailable {
-		err = uc.infoRepo.Cache(ctx, key, titleInfos)
+		err = uc.infoRepository.Cache(ctx, key, titleInfos)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}

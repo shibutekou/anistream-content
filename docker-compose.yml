@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: anistream-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8800:8800"
+    environment:
+      - CONFIG_PATH=/app/config/prod.yml
+      - ANIGO_LOGS=/app/anistream.log
+      - KODIK_TOKEN=${KODIK_TOKEN}
+    volumes:
+      - /home/bruma/anistream/config:/app/config
+
+  redis:
+    container_name: anistream-cache
+    image: redis:7.0.12
+    restart: always
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

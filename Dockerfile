@@ -1,14 +1,13 @@
-FROM golang:1.20
-LABEL authors="vgekko"
+FROM golang:1.21-alpine as builder
 
 WORKDIR /app
+
 COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY . ./
+COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o ani-go cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o anistream ./cmd/main.go
 
-EXPOSE 8800
-CMD ["./ani-go"]
+CMD ["./anistream"]

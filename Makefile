@@ -1,9 +1,13 @@
-build:
-	go build -o anigo cmd/main.go
+.PHONY: start dr dc
 
-run:
-	go run cmd/main.go
+start:
+	go build -o anistream cmd/main.go
+	./anigo
 
-docker:
-	docker build --tag anigo .
-	docker run -e KODIK_TOKEN=${KODIK_TOKEN} --network=host anigo
+dr:
+	docker build --tag anistream .
+	docker run -e KODIK_TOKEN=${KODIK_TOKEN} --network=host anistream
+
+dc:
+	docker compose down
+	docker compose up
