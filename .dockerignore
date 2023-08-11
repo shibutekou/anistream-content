@@ -1,0 +1,14 @@
+# jet brains ide's directory
+.idea/
+
+# git directory
+.git/
+
+# executables
+*.app
+*.exe
+*.war
+
+# pprof files
+*.pro
+*.pprof
