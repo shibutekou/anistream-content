@@ -28,10 +28,10 @@ dist/
 
 # config files
 *.env
-config.yaml
+config.yml
 configs/config.yml
-local.yaml
-prod.yaml
+local.yml
+prod.yml
 
 # Unit test reports
 TEST*.xml
