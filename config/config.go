@@ -8,9 +8,9 @@ import (
 )
 
 type Config struct {
-	Env string 	`yaml:"env" env-default:"local"`
-	HTTP 		`yaml:"http"`
-	Redis 		`yaml:"redis"`
+	Env   string `yaml:"env" env-default:"local"`
+	HTTP  `yaml:"http"`
+	Redis `yaml:"redis"`
 }
 
 type HTTP struct {
@@ -19,8 +19,8 @@ type HTTP struct {
 }
 
 type Redis struct {
-	Addr string 				`yaml:"addr" env-required:"true"`
-	InfoCacheTTL time.Duration 	`yaml:"info_cache_ttl" env-required:"true"`
+	Addr         string        `yaml:"addr" env-required:"true"`
+	InfoCacheTTL time.Duration `yaml:"info_cache_ttl" env-default:"86400s"`
 }
 
 func Load() *Config {
@@ -41,4 +41,3 @@ func Load() *Config {
 
 	return &cfg
 }
-

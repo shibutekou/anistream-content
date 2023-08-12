@@ -33,7 +33,7 @@ func Run() {
 	// repositories
 	redisRepo := redisRepository.NewRepositoryRedis(redis, cfg.Redis)
 
-	// initialize usecases
+	// use cases
 	useCase := usecase.NewUseCase(redisRepo, webAPI)
 
 	// HTTP server
