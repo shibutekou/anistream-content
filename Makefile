@@ -1,4 +1,4 @@
-.PHONY: start dr dc
+.PHONY: start dr dc redc
 
 start:
 	go build -o anistream cmd/main.go
@@ -11,3 +11,7 @@ dr:
 dc:
 	docker compose down
 	docker compose up
+
+redc:
+	docker compose down
+	docker compose up --build
