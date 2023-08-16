@@ -1,6 +1,6 @@
 package webapi
 
-import "github.com/vgekko/ani-go/internal/entity"
+import "github.com/vgekko/anistream/internal/entity"
 
 type WebAPI struct {
 	Kodik

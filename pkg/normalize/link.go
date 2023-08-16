@@ -2,7 +2,7 @@ package normalize
 
 import (
 	"fmt"
-	"github.com/vgekko/ani-go/internal/entity"
+	"github.com/vgekko/anistream/internal/entity"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -16,7 +16,7 @@ func FilterParams(urlParams string) (entity.TitleFilter, error) {
 		return entity.TitleFilter{}, fmt.Errorf("invalid search parameter")
 	}
 
-	return entity.TitleFilter{Option: x[0], Value:  x[1]}, nil
+	return entity.TitleFilter{Option: x[0], Value: x[1]}, nil
 }
 
 func URL(link string) string {

@@ -10,12 +10,18 @@ import (
 type Config struct {
 	Env   string `yaml:"env" env-default:"local"`
 	HTTP  `yaml:"http"`
+	GRPC  `yaml:"grpc"`
 	Redis `yaml:"redis"`
 }
 
 type HTTP struct {
 	Host string `yaml:"host" env-default:"localhost"`
 	Port string `yaml:"port" env-default:"8800"`
+}
+
+type GRPC struct {
+	Host string `yaml:"host" env-default:"localhost"`
+	Port string `yaml:"port" env-default:"50051"`
 }
 
 type Redis struct {

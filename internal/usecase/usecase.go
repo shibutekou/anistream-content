@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/vgekko/ani-go/internal/entity"
-	"github.com/vgekko/ani-go/internal/repository/redis"
-	"github.com/vgekko/ani-go/internal/webapi"
+	"github.com/vgekko/anistream/internal/entity"
+	"github.com/vgekko/anistream/internal/repository/redis"
+	"github.com/vgekko/anistream/internal/webapi"
 )
 
 type UseCase struct {

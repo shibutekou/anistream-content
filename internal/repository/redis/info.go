@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/vgekko/ani-go/internal/entity"
+	"github.com/vgekko/anistream/internal/entity"
 )
 
 const notExists = iota

@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/vgekko/ani-go/internal/entity"
-	"github.com/vgekko/ani-go/pkg/apperror"
+	"github.com/vgekko/anistream/internal/entity"
+	"github.com/vgekko/anistream/pkg/apperror"
 )
 
 const baseURLSearch = "https://kodikapi.com/search?"

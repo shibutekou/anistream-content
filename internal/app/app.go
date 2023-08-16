@@ -1,20 +1,23 @@
 package app
 
 import (
+	controllerGrpc "github.com/vgekko/anistream/internal/controller/grpc"
+	"google.golang.org/grpc"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/vgekko/ani-go/config"
-	v1 "github.com/vgekko/ani-go/internal/controller/http/v1"
-	redisRepository "github.com/vgekko/ani-go/internal/repository/redis"
-	"github.com/vgekko/ani-go/internal/usecase"
-	"github.com/vgekko/ani-go/internal/webapi"
-	"github.com/vgekko/ani-go/pkg/httpserver"
-	"github.com/vgekko/ani-go/pkg/logger/sl"
-	redisClient "github.com/vgekko/ani-go/pkg/redis"
+	"github.com/vgekko/anistream/config"
+	v1 "github.com/vgekko/anistream/internal/controller/http/v1"
+	redisRepository "github.com/vgekko/anistream/internal/repository/redis"
+	"github.com/vgekko/anistream/internal/usecase"
+	"github.com/vgekko/anistream/internal/webapi"
+	"github.com/vgekko/anistream/pkg/httpserver"
+	"github.com/vgekko/anistream/pkg/logger/sl"
+	redisClient "github.com/vgekko/anistream/pkg/redis"
 )
 
 func Run() {
@@ -40,8 +43,25 @@ func Run() {
 	engine := gin.New()
 	v1.NewRouter(engine, useCase, log)
 
+	// starting HTTP server
 	log.Info("starting http server")
 	httpServer := httpserver.Start(engine)
+
+	// starting gRPC server
+	grpcServer := grpc.NewServer()
+	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.InfoUseCase, useCase.LinkUseCase, log)
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Error("could not listen tcp :50051: ", sl.Err(err))
+	}
+
+	log.Info("starting grpc server")
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Error("app.Run: grpc: ", sl.Err(err))
+		}
+	}()
 
 	// waiting signal
 	interrupt := make(chan os.Signal, 1)
@@ -55,7 +75,7 @@ func Run() {
 	}
 
 	// shutdown
-	err := httpServer.Shutdown()
+	err = httpServer.Shutdown()
 	if err != nil {
 		log.Error("app.Run: shutdown: ", sl.Err(err))
 	}

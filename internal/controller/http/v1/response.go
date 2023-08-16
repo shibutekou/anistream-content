@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/vgekko/ani-go/internal/controller/http/v1/middleware"
+	"github.com/vgekko/anistream/internal/controller/http/v1/middleware"
 	"golang.org/x/exp/slog"
 )
 

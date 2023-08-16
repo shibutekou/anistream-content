@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/vgekko/ani-go/config"
-	"github.com/vgekko/ani-go/internal/entity"
+	"github.com/vgekko/anistream/config"
+	"github.com/vgekko/anistream/internal/entity"
 )
 
 type RepositoryRedis struct {
