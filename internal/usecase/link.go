@@ -2,10 +2,10 @@ package usecase
 
 import (
 	"fmt"
-	"github.com/vgekko/anistream/internal/entity"
+	"github.com/vgekko/anistream-content/internal/entity"
 
-	"github.com/vgekko/anistream/internal/webapi"
-	"github.com/vgekko/anistream/pkg/normalize"
+	"github.com/vgekko/anistream-content/internal/webapi"
+	"github.com/vgekko/anistream-content/pkg/normalize"
 )
 
 type LinkUseCaseImpl struct {

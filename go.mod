@@ -1,4 +1,4 @@
-module github.com/vgekko/anistream
+module github.com/vgekko/anistream-content
 
 go 1.21
 
@@ -11,7 +11,6 @@ require (
 	github.com/prometheus/client_golang v1.16.0
 	github.com/redis/go-redis/v9 v9.0.5
 	golang.org/x/exp v0.0.0-20230810033253-352e893a4cad
-	golang.org/x/sync v0.3.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
 )

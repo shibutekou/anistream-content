@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/vgekko/anistream/internal/app"
+	"github.com/vgekko/anistream-content/internal/app"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package normalize
 
 import (
 	"fmt"
-	"github.com/vgekko/anistream/internal/entity"
+	"github.com/vgekko/anistream-content/internal/entity"
 	"strings"
 
 	"golang.org/x/exp/slices"

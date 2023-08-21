@@ -6,9 +6,9 @@ import (
 	"net/url"
 
 	"github.com/gin-gonic/gin"
-	"github.com/vgekko/anistream/internal/usecase"
-	"github.com/vgekko/anistream/pkg/apperror"
-	"github.com/vgekko/anistream/pkg/normalize"
+	"github.com/vgekko/anistream-content/internal/usecase"
+	"github.com/vgekko/anistream-content/pkg/apperror"
+	"github.com/vgekko/anistream-content/pkg/normalize"
 	"golang.org/x/exp/slog"
 )
 

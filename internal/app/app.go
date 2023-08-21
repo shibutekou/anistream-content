@@ -1,23 +1,21 @@
 package app
 
 import (
-	controllerGrpc "github.com/vgekko/anistream/internal/controller/grpc"
+	"github.com/gin-gonic/gin"
+	"github.com/vgekko/anistream-content/config"
+	controllerGrpc "github.com/vgekko/anistream-content/internal/controller/grpc"
+	v1 "github.com/vgekko/anistream-content/internal/controller/http/v1"
+	redisRepository "github.com/vgekko/anistream-content/internal/repository/redis"
+	"github.com/vgekko/anistream-content/internal/usecase"
+	"github.com/vgekko/anistream-content/internal/webapi"
+	"github.com/vgekko/anistream-content/pkg/httpserver"
+	"github.com/vgekko/anistream-content/pkg/logger/sl"
+	redisClient "github.com/vgekko/anistream-content/pkg/redis"
 	"google.golang.org/grpc"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/gin-gonic/gin"
-
-	"github.com/vgekko/anistream/config"
-	v1 "github.com/vgekko/anistream/internal/controller/http/v1"
-	redisRepository "github.com/vgekko/anistream/internal/repository/redis"
-	"github.com/vgekko/anistream/internal/usecase"
-	"github.com/vgekko/anistream/internal/webapi"
-	"github.com/vgekko/anistream/pkg/httpserver"
-	"github.com/vgekko/anistream/pkg/logger/sl"
-	redisClient "github.com/vgekko/anistream/pkg/redis"
 )
 
 func Run() {

@@ -2,14 +2,14 @@ package grpc
 
 import (
 	"context"
-	"github.com/vgekko/anistream/internal/entity"
-	"github.com/vgekko/anistream/internal/usecase"
-	"github.com/vgekko/anistream/pkg/logger/sl"
+	"github.com/vgekko/anistream-content/internal/entity"
+	"github.com/vgekko/anistream-content/internal/usecase"
+	"github.com/vgekko/anistream-content/pkg/logger/sl"
 	"golang.org/x/exp/slog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/vgekko/anistream/internal/controller/grpc/pb"
+	"github.com/vgekko/anistream-content/internal/controller/grpc/pb"
 )
 
 type ContentServer struct {

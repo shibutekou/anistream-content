@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/redis/go-redis/v9"
-	"github.com/vgekko/anistream/config"
+	"github.com/vgekko/anistream-content/config"
 	"golang.org/x/exp/slog"
 )
 

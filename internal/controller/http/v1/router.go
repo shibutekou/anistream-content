@@ -4,8 +4,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/vgekko/anistream/internal/controller/http/v1/middleware"
-	"github.com/vgekko/anistream/internal/usecase"
+	"github.com/vgekko/anistream-content/internal/controller/http/v1/middleware"
+	"github.com/vgekko/anistream-content/internal/usecase"
 	"golang.org/x/exp/slog"
 )
 

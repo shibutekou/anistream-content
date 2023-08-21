@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 	"fmt"
-	"github.com/vgekko/anistream/internal/entity"
-	"github.com/vgekko/anistream/internal/repository/redis"
-	"github.com/vgekko/anistream/internal/webapi"
+	"github.com/vgekko/anistream-content/internal/entity"
+	"github.com/vgekko/anistream-content/internal/repository/redis"
+	"github.com/vgekko/anistream-content/internal/webapi"
 )
 
 type InfoUseCaseImpl struct {
