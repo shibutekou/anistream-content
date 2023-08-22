@@ -44,15 +44,25 @@ func transformTitleContent(titles []entity.TitleContent) []*pb.TitleContent {
 
 	for i := range titles {
 		tmp := pb.TitleContent{
-			Link:        titles[i].Link,
-			Title:       titles[i].Title,
-			TitleOrig:   titles[i].TitleOrig,
-			OtherTitle:  titles[i].OtherTitle,
-			Year:        titles[i].Year,
-			KinopoiskID: titles[i].KinopoiskID,
-			ShikimoriID: titles[i].ShikimoriID,
-			ImdbID:      titles[i].IMDbID,
-			Screenshots: titles[i].Screenshots,
+			Link:             titles[i].Link,
+			Title:            titles[i].Title,
+			TitleOrig:        titles[i].TitleOrig,
+			OtherTitle:       titles[i].OtherTitle,
+			Year:             titles[i].Year,
+			KinopoiskID:      titles[i].KinopoiskID,
+			ShikimoriID:      titles[i].ShikimoriID,
+			ImdbID:           titles[i].IMDbID,
+			AnimeStatus:      titles[i].AnimeStatus,
+			AnimeDescription: titles[i].AnimeDescription,
+			PosterURL:        titles[i].PosterURL,
+			Duration:         titles[i].Duration,
+			KinopoiskRating:  titles[i].KinopoiskRating,
+			ImdbRating:       titles[i].IMDbRating,
+			ShikimoriRating:  titles[i].ShikimoriRating,
+			PremiereWorld:    titles[i].PremiereWorld,
+			EpisodesTotal:    titles[i].EpisodesTotal,
+			Writers:          titles[i].Writers,
+			Screenshots:      titles[i].Screenshots,
 		}
 
 		result = append(result, &tmp)

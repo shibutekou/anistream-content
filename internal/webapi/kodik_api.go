@@ -11,7 +11,7 @@ import (
 	"github.com/vgekko/anistream-content/pkg/apperror"
 )
 
-const baseURLSearch = "https://kodikapi.com/search?"
+const baseURLSearch = "https://kodikapi.com/search?with_material_data=true&"
 
 type KodikWebAPI struct {
 	token  string
@@ -63,6 +63,16 @@ func toTitleContent(src entity.KodikAPI) []entity.TitleContent {
 		ti.ShikimoriID = v.ShikimoriID
 		ti.IMDbID = v.IMDbID
 		ti.Screenshots = v.Screenshots
+		ti.AnimeStatus = v.AnimeStatus
+		ti.AnimeDescription = v.AnimeDescription
+		ti.PosterURL = v.PosterURL
+		ti.Duration = v.Duration
+		ti.KinopoiskRating = v.KinopoiskRating
+		ti.IMDbRating = v.IMDbRating
+		ti.ShikimoriRating = v.ShikimoriRating
+		ti.PremiereWorld = v.PremiereWorld
+		ti.EpisodesTotal = v.EpisodesTotal
+		ti.Writers = v.Writers
 
 		titleContents = append(titleContents, ti)
 	}

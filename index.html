@@ -16,7 +16,7 @@
     </label>
     <script>
         function getInfo(title) {
-            fetch("http://localhost:8800/v1/info/kinopoisk?kinopoisk_id=" + title)
+            fetch("http://localhost:8800/v1/search/title?kinopoisk_id=" + title)
             .then(function(response) {
                 return response.json();
             })
@@ -42,9 +42,9 @@
         }
 
         function getLink(title) {
-            fetch("http://localhost:8800/v1/link/kinopoisk?kinopoisk_id=" + title)
+            fetch("http://localhost:8800/v1/search/title?kinopoisk_id=" + title)
               .then(function(response) {
-                return response.text();
+                return response.json();
               })
               .then(function(data) {
                 document.getElementById("video_source").src = data.replace(/['"]+/g, '');
