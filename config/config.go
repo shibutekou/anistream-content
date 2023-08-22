@@ -11,7 +11,7 @@ type Config struct {
 	Env   string `yaml:"env" env-default:"local"`
 	HTTP  `yaml:"http"`
 	GRPC  `yaml:"grpc"`
-	Redis `yaml:"redis"`
+	Cache `yaml:"cache"`
 }
 
 type HTTP struct {
@@ -24,9 +24,8 @@ type GRPC struct {
 	Port string `yaml:"port" env-default:"50051"`
 }
 
-type Redis struct {
-	Addr         string        `yaml:"addr" env-required:"true"`
-	InfoCacheTTL time.Duration `yaml:"info_cache_ttl" env-default:"86400s"`
+type Cache struct {
+	TTL time.Duration `yaml:"ttl" env-default:"86400s"`
 }
 
 func Load() *Config {

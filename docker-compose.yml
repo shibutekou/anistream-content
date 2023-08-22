@@ -15,17 +15,5 @@ services:
     volumes:
       - /home/bruma/anistream-content/config:/app/config
 
-  redis:
-    container_name: anistream-content-cache
-    image: redis:7.0.12
-    restart: always
-    ports:
-      - "6380:6379"
-    healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 networks:
   anistream-network:

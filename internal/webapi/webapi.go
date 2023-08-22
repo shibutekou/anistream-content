@@ -7,11 +7,9 @@ type WebAPI struct {
 }
 
 func NewWebAPI() *WebAPI {
-	return &WebAPI{
-		Kodik: NewKodikWebAPI(),
-	}
+	return &WebAPI{Kodik: NewKodikWebAPI()}
 }
 
 type Kodik interface {
-	SearchTitles(option, value string) (entity.KodikAPI, error)
+	SearchTitles(option, value string) ([]entity.TitleInfo, error)
 }

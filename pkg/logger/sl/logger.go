@@ -4,7 +4,7 @@ import (
 	"io"
 	"os"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 const (
