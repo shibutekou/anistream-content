@@ -7,13 +7,13 @@ import (
 )
 
 type UseCase struct {
-	InfoUseCase
+	ContentUseCase
 }
 
 func NewUseCase(cache repository.CacheRepository, kodik *webapi.WebAPI) *UseCase {
-	return &UseCase{InfoUseCase: NewInfoUseCase(kodik, cache)}
+	return &UseCase{ContentUseCase: NewContentUseCase(kodik, cache)}
 }
 
-type InfoUseCase interface {
-	Search(filter entity.TitleFilter) ([]entity.TitleInfo, error)
+type ContentUseCase interface {
+	Search(filter entity.TitleFilter) ([]entity.TitleContent, error)
 }

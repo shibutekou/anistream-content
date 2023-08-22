@@ -25,7 +25,8 @@ func NewKodikWebAPI() *KodikWebAPI {
 	return &KodikWebAPI{token: token, client: client}
 }
 
-func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.TitleInfo, error) {
+// SearchTitles sends a request to external API and gets data about titles
+func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.TitleContent, error) {
 	var kodikResponse entity.KodikAPI
 
 	url := fmt.Sprintf("%stoken=%s&%s=%s", baseURLSearch, k.token, option, value)
@@ -45,12 +46,12 @@ func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.TitleInfo, er
 		return nil, apperror.ErrTitleNotFound
 	}
 
-	return toTitleInfo(kodikResponse), nil
+	return toTitleContent(kodikResponse), nil
 }
 
-func toTitleInfo(src entity.KodikAPI) []entity.TitleInfo {
-	var ti entity.TitleInfo
-	titleInfos := make([]entity.TitleInfo, 0, len(src.Results))
+func toTitleContent(src entity.KodikAPI) []entity.TitleContent {
+	var ti entity.TitleContent
+	titleContents := make([]entity.TitleContent, 0, len(src.Results))
 
 	for _, v := range src.Results {
 		ti.Link = v.Link
@@ -63,13 +64,18 @@ func toTitleInfo(src entity.KodikAPI) []entity.TitleInfo {
 		ti.IMDbID = v.IMDbID
 		ti.Screenshots = v.Screenshots
 
-		titleInfos = append(titleInfos, ti)
+		titleContents = append(titleContents, ti)
 	}
 
-	var uniqueTitles []entity.TitleInfo
+	return filterUnique(titleContents)
+}
+
+// filterUnique removes duplicate title contents from slice
+func filterUnique(titleContents []entity.TitleContent) []entity.TitleContent {
+	var uniqueTitles []entity.TitleContent
 	seen := make(map[string]bool)
 
-	for _, v := range titleInfos {
+	for _, v := range titleContents {
 		if !seen[v.Title] {
 			seen[v.Title] = true
 			uniqueTitles = append(uniqueTitles, v)

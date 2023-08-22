@@ -10,7 +10,6 @@ type errorResponse struct {
 	Error string `json:"error"`
 }
 
-// TODO: подобрать красивое решение
 func newErrorResponse(c *gin.Context, statusCode int, message string, log *slog.Logger) {
 	log = log.With(
 		slog.String("method", c.Request.Method),

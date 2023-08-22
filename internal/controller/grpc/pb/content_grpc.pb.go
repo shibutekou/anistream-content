@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ContentServiceClient interface {
-	GetTitleInfo(ctx context.Context, in *GetTitleInfoRequest, opts ...grpc.CallOption) (*GetTitleInfoReply, error)
+	GetTitleContent(ctx context.Context, in *GetTitleContentRequest, opts ...grpc.CallOption) (*GetTitleContentReply, error)
 }
 
 type contentServiceClient struct {
@@ -33,9 +33,9 @@ func NewContentServiceClient(cc grpc.ClientConnInterface) ContentServiceClient {
 	return &contentServiceClient{cc}
 }
 
-func (c *contentServiceClient) GetTitleInfo(ctx context.Context, in *GetTitleInfoRequest, opts ...grpc.CallOption) (*GetTitleInfoReply, error) {
-	out := new(GetTitleInfoReply)
-	err := c.cc.Invoke(ctx, "/ContentService/GetTitleInfo", in, out, opts...)
+func (c *contentServiceClient) GetTitleContent(ctx context.Context, in *GetTitleContentRequest, opts ...grpc.CallOption) (*GetTitleContentReply, error) {
+	out := new(GetTitleContentReply)
+	err := c.cc.Invoke(ctx, "/ContentService/GetTitleContent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *contentServiceClient) GetTitleInfo(ctx context.Context, in *GetTitleInf
 // All implementations must embed UnimplementedContentServiceServer
 // for forward compatibility
 type ContentServiceServer interface {
-	GetTitleInfo(context.Context, *GetTitleInfoRequest) (*GetTitleInfoReply, error)
+	GetTitleContent(context.Context, *GetTitleContentRequest) (*GetTitleContentReply, error)
 	mustEmbedUnimplementedContentServiceServer()
 }
 
@@ -54,8 +54,8 @@ type ContentServiceServer interface {
 type UnimplementedContentServiceServer struct {
 }
 
-func (UnimplementedContentServiceServer) GetTitleInfo(context.Context, *GetTitleInfoRequest) (*GetTitleInfoReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTitleInfo not implemented")
+func (UnimplementedContentServiceServer) GetTitleContent(context.Context, *GetTitleContentRequest) (*GetTitleContentReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTitleContent not implemented")
 }
 func (UnimplementedContentServiceServer) mustEmbedUnimplementedContentServiceServer() {}
 
@@ -70,20 +70,20 @@ func RegisterContentServiceServer(s grpc.ServiceRegistrar, srv ContentServiceSer
 	s.RegisterService(&ContentService_ServiceDesc, srv)
 }
 
-func _ContentService_GetTitleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTitleInfoRequest)
+func _ContentService_GetTitleContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTitleContentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ContentServiceServer).GetTitleInfo(ctx, in)
+		return srv.(ContentServiceServer).GetTitleContent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ContentService/GetTitleInfo",
+		FullMethod: "/ContentService/GetTitleContent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).GetTitleInfo(ctx, req.(*GetTitleInfoRequest))
+		return srv.(ContentServiceServer).GetTitleContent(ctx, req.(*GetTitleContentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +96,8 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ContentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetTitleInfo",
-			Handler:    _ContentService_GetTitleInfo_Handler,
+			MethodName: "GetTitleContent",
+			Handler:    _ContentService_GetTitleContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

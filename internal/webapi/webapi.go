@@ -11,5 +11,5 @@ func NewWebAPI() *WebAPI {
 }
 
 type Kodik interface {
-	SearchTitles(option, value string) ([]entity.TitleInfo, error)
+	SearchTitles(option, value string) ([]entity.TitleContent, error)
 }

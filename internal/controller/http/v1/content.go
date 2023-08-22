@@ -12,18 +12,18 @@ import (
 	"log/slog"
 )
 
-type infoRoutes struct {
-	uc  usecase.InfoUseCase
+type contentRoutes struct {
+	uc  usecase.ContentUseCase
 	log *slog.Logger
 }
 
-func newInfoRoutes(handler *gin.RouterGroup, uc usecase.InfoUseCase, log *slog.Logger) {
-	r := &infoRoutes{uc: uc, log: log}
+func newContentRoutes(handler *gin.RouterGroup, uc usecase.ContentUseCase, log *slog.Logger) {
+	r := &contentRoutes{uc: uc, log: log}
 
 	handler.GET("/title", r.search)
 }
 
-func (r *infoRoutes) search(c *gin.Context) {
+func (r *contentRoutes) search(c *gin.Context) {
 	params, err := url.ParseQuery(c.Request.URL.RawQuery)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error(), r.log)

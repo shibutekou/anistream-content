@@ -12,13 +12,13 @@ import (
 )
 
 type ContentServer struct {
-	uc  usecase.InfoUseCase
+	uc  usecase.ContentUseCase
 	log *slog.Logger
 
 	pb.UnimplementedContentServiceServer
 }
 
-func NewContentServerGrpc(gserver *grpc.Server, uc usecase.InfoUseCase, log *slog.Logger) {
+func NewContentServerGrpc(gserver *grpc.Server, uc usecase.ContentUseCase, log *slog.Logger) {
 	cs := ContentServer{uc, log, pb.UnimplementedContentServiceServer{}}
 
 	pb.RegisterContentServiceServer(gserver, &cs)
@@ -26,33 +26,33 @@ func NewContentServerGrpc(gserver *grpc.Server, uc usecase.InfoUseCase, log *slo
 	reflection.Register(gserver)
 }
 
-func (s *ContentServer) GetTitleInfo(ctx context.Context, in *pb.GetTitleInfoRequest) (*pb.GetTitleInfoReply, error) {
+func (s *ContentServer) GetTitleContent(ctx context.Context, in *pb.GetTitleContentRequest) (*pb.GetTitleContentReply, error) {
 	titleInfos, err := s.uc.Search(entity.TitleFilter{Opt: in.Filter.Opt, Val: in.Filter.Val})
 	if err != nil {
-		s.log.Error("grpc: GetTitleInfo: ", sl.Err(err))
+		s.log.Error("grpc: GetTitleContent: ", sl.Err(err))
 		return nil, err
 	}
 
-	reply := pb.GetTitleInfoReply{}
-	reply.TitleInfo = transformTitleInfo(titleInfos)
+	reply := pb.GetTitleContentReply{}
+	reply.TitleContent = transformTitleContent(titleInfos)
 
 	return &reply, nil
 }
 
-func transformTitleInfo(info []entity.TitleInfo) []*pb.TitleInfo {
-	var result = make([]*pb.TitleInfo, 0, len(info))
+func transformTitleContent(titles []entity.TitleContent) []*pb.TitleContent {
+	var result = make([]*pb.TitleContent, 0, len(titles))
 
-	for i := range info {
-		tmp := pb.TitleInfo{
-			Link:        info[i].Link,
-			Title:       info[i].Title,
-			TitleOrig:   info[i].TitleOrig,
-			OtherTitle:  info[i].OtherTitle,
-			Year:        info[i].Year,
-			KinopoiskID: info[i].KinopoiskID,
-			ShikimoriID: info[i].ShikimoriID,
-			ImdbID:      info[i].IMDbID,
-			Screenshots: info[i].Screenshots,
+	for i := range titles {
+		tmp := pb.TitleContent{
+			Link:        titles[i].Link,
+			Title:       titles[i].Title,
+			TitleOrig:   titles[i].TitleOrig,
+			OtherTitle:  titles[i].OtherTitle,
+			Year:        titles[i].Year,
+			KinopoiskID: titles[i].KinopoiskID,
+			ShikimoriID: titles[i].ShikimoriID,
+			ImdbID:      titles[i].IMDbID,
+			Screenshots: titles[i].Screenshots,
 		}
 
 		result = append(result, &tmp)

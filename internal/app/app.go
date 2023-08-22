@@ -45,7 +45,7 @@ func Run(cfg *config.Config) {
 
 	// starting gRPC server
 	grpcServer := grpc.NewServer()
-	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.InfoUseCase, log)
+	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.ContentUseCase, log)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPC.Port))
 	if err != nil {

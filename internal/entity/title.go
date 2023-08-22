@@ -1,6 +1,6 @@
 package entity
 
-type TitleInfo struct {
+type TitleContent struct {
 	Link        string   `json:"link"`
 	Title       string   `json:"title,omitempty"`
 	TitleOrig   string   `json:"title_orig,omitempty"`

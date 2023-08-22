@@ -9,22 +9,22 @@ import (
 	"github.com/vgekko/anistream-content/internal/webapi"
 )
 
-type InfoUseCaseImpl struct {
+type ContentUseCaseImpl struct {
 	kodik webapi.Kodik
 	cache repository.CacheRepository
 }
 
-func NewInfoUseCase(kodik webapi.Kodik, cache repository.CacheRepository) *InfoUseCaseImpl {
-	return &InfoUseCaseImpl{
+func NewContentUseCase(kodik webapi.Kodik, cache repository.CacheRepository) *ContentUseCaseImpl {
+	return &ContentUseCaseImpl{
 		kodik: kodik,
 		cache: cache,
 	}
 }
 
-func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo, error) {
-	op := "InfoUseCase.Search"
+func (uc *ContentUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleContent, error) {
+	op := "ContentUseCase.Search"
 
-	var titleInfos []entity.TitleInfo
+	var titleContents []entity.TitleContent
 	var err error
 
 	// check the cache if cache database is available
@@ -32,7 +32,7 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 	key := fmt.Sprintf("%s:%s", filter.Opt, filter.Val)
 	exists := true
 
-	val, err := uc.cache.Get(key)
+	content, err := uc.cache.Get(key)
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			exists = false
@@ -40,18 +40,18 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 	}
 
 	if exists {
-		return val, nil
+		return content, nil
 	} else {
-		titleInfos, err = uc.kodik.SearchTitles(filter.Opt, filter.Val)
+		titleContents, err = uc.kodik.SearchTitles(filter.Opt, filter.Val)
 		if err != nil {
 			return nil, fmt.Errorf("%s:%w", op, err)
 		}
 
 		// saving data to cache
-		if err := uc.cache.Set(key, titleInfos); err != nil {
+		if err := uc.cache.Set(key, titleContents); err != nil {
 			return nil, fmt.Errorf("%s:%w", op, err)
 		}
 
-		return titleInfos, nil
+		return titleContents, nil
 	}
 }

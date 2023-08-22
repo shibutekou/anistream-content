@@ -17,9 +17,9 @@ func NewCacheRepository(cache *bigcache.BigCache) *CacheRepositoryImpl {
 	return &CacheRepositoryImpl{cache: cache}
 }
 
-func (r *CacheRepositoryImpl) Get(key string) ([]entity.TitleInfo, error) {
-	var titleInfos []entity.TitleInfo
+func (r *CacheRepositoryImpl) Get(key string) ([]entity.TitleContent, error) {
 	op := "CacheRepository.Get"
+	var titleInfos []entity.TitleContent
 
 	val, err := r.cache.Get(key)
 	if err != nil {
@@ -31,7 +31,7 @@ func (r *CacheRepositoryImpl) Get(key string) ([]entity.TitleInfo, error) {
 
 	b := bytes.NewReader(val)
 
-	// decode []byte to []entity.TitleInfo
+	// decode []byte to []entity.TitleContent
 	if err := gob.NewDecoder(b).Decode(&titleInfos); err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (r *CacheRepositoryImpl) Get(key string) ([]entity.TitleInfo, error) {
 	return titleInfos, nil
 }
 
-func (r *CacheRepositoryImpl) Set(key string, data []entity.TitleInfo) error {
+func (r *CacheRepositoryImpl) Set(key string, data []entity.TitleContent) error {
 	var b bytes.Buffer
 
 	// encodes data to bytes buffer

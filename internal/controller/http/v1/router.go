@@ -26,7 +26,7 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 	{
 		search := v1.Group("/search")
 		{
-			newInfoRoutes(search, uc.InfoUseCase, log)
+			newContentRoutes(search, uc.ContentUseCase, log)
 		}
 
 	}
