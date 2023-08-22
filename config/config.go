@@ -20,7 +20,6 @@ type HTTP struct {
 }
 
 type GRPC struct {
-	Host string `yaml:"host" env-default:"localhost"`
 	Port string `yaml:"port" env-default:"50051"`
 }
 

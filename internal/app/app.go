@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/anistream-content/config"
 	controllerGrpc "github.com/vgekko/anistream-content/internal/controller/grpc"
@@ -18,20 +19,18 @@ import (
 	"syscall"
 )
 
-func Run() {
-	cfg := config.Load()
-
+func Run(cfg *config.Config) {
 	// initialize slog logger
 	log := sl.New(cfg.Env)
 
-	// initialize cache
-	cacher := cache.New(cfg.Cache)
+	// initialize bigcache
+	bc := cache.New(cfg.Cache)
 
 	// web api
 	webAPI := webapi.NewWebAPI()
 
 	// repositories
-	repo := repository.NewRepository(cacher)
+	repo := repository.NewRepository(bc)
 
 	// use cases
 	useCase := usecase.NewUseCase(repo, webAPI)
@@ -41,19 +40,19 @@ func Run() {
 	v1.NewRouter(engine, useCase, log)
 
 	// starting HTTP server
-	log.Info("starting http server")
+	log.Info("starting HTTP server")
 	httpServer := httpserver.Start(engine)
 
 	// starting gRPC server
 	grpcServer := grpc.NewServer()
 	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.InfoUseCase, log)
 
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPC.Port))
 	if err != nil {
-		log.Error("could not listen tcp :50051: ", sl.Err(err))
+		log.Error("could not listen tcp: ", sl.Err(err))
 	}
 
-	log.Info("starting grpc server")
+	log.Info("starting gRPC server")
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Error("app.Run: grpc: ", sl.Err(err))
