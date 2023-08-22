@@ -20,7 +20,7 @@ type infoRoutes struct {
 func newInfoRoutes(handler *gin.RouterGroup, uc usecase.InfoUseCase, log *slog.Logger) {
 	r := &infoRoutes{uc: uc, log: log}
 
-	handler.GET("/info", r.search)
+	handler.GET("/title", r.search)
 }
 
 func (r *infoRoutes) search(c *gin.Context) {
