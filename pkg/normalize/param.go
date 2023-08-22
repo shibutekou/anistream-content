@@ -18,7 +18,3 @@ func FilterParams(urlParams string) (entity.TitleFilter, error) {
 
 	return entity.TitleFilter{Opt: x[0], Val: x[1]}, nil
 }
-
-func URL(link string) string {
-	return fmt.Sprintf("http://%s", strings.TrimLeft(link, "/"))
-}
