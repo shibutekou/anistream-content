@@ -42,7 +42,7 @@ func (s *ContentServer) GetTitleInfo(ctx context.Context, in *pb.GetTitleInfoReq
 func transformTitleInfo(info []entity.TitleInfo) []*pb.TitleInfo {
 	var result = make([]*pb.TitleInfo, 0, len(info))
 
-	for i, _ := range info {
+	for i := range info {
 		tmp := pb.TitleInfo{
 			Link:        info[i].Link,
 			Title:       info[i].Title,

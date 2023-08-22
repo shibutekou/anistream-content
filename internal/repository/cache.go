@@ -23,7 +23,7 @@ func (r *CacheRepositoryImpl) Get(key string) ([]entity.TitleInfo, error) {
 
 	val, err := r.cache.Get(key)
 	if err != nil {
-		if errors.As(err, &bigcache.ErrEntryNotFound) {
+		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return nil, err
 		}
 		return nil, fmt.Errorf("%s:%s", op, err)

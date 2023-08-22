@@ -34,7 +34,7 @@ func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo
 
 	val, err := uc.cache.Get(key)
 	if err != nil {
-		if errors.As(err, &bigcache.ErrEntryNotFound) {
+		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			exists = false
 		}
 	}
