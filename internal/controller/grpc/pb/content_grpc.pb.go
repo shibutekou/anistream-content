@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ContentServiceClient interface {
 	GetTitleInfo(ctx context.Context, in *GetTitleInfoRequest, opts ...grpc.CallOption) (*GetTitleInfoReply, error)
-	GetLink(ctx context.Context, in *GetLinkRequest, opts ...grpc.CallOption) (*GetLinkReply, error)
 }
 
 type contentServiceClient struct {
@@ -43,21 +42,11 @@ func (c *contentServiceClient) GetTitleInfo(ctx context.Context, in *GetTitleInf
 	return out, nil
 }
 
-func (c *contentServiceClient) GetLink(ctx context.Context, in *GetLinkRequest, opts ...grpc.CallOption) (*GetLinkReply, error) {
-	out := new(GetLinkReply)
-	err := c.cc.Invoke(ctx, "/ContentService/GetLink", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ContentServiceServer is the server API for ContentService service.
 // All implementations must embed UnimplementedContentServiceServer
 // for forward compatibility
 type ContentServiceServer interface {
 	GetTitleInfo(context.Context, *GetTitleInfoRequest) (*GetTitleInfoReply, error)
-	GetLink(context.Context, *GetLinkRequest) (*GetLinkReply, error)
 	mustEmbedUnimplementedContentServiceServer()
 }
 
@@ -67,9 +56,6 @@ type UnimplementedContentServiceServer struct {
 
 func (UnimplementedContentServiceServer) GetTitleInfo(context.Context, *GetTitleInfoRequest) (*GetTitleInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTitleInfo not implemented")
-}
-func (UnimplementedContentServiceServer) GetLink(context.Context, *GetLinkRequest) (*GetLinkReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetLink not implemented")
 }
 func (UnimplementedContentServiceServer) mustEmbedUnimplementedContentServiceServer() {}
 
@@ -102,24 +88,6 @@ func _ContentService_GetTitleInfo_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ContentService_GetLink_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetLinkRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ContentServiceServer).GetLink(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ContentService/GetLink",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ContentServiceServer).GetLink(ctx, req.(*GetLinkRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ContentService_ServiceDesc is the grpc.ServiceDesc for ContentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -130,10 +98,6 @@ var ContentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetTitleInfo",
 			Handler:    _ContentService_GetTitleInfo_Handler,
-		},
-		{
-			MethodName: "GetLink",
-			Handler:    _ContentService_GetLink_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

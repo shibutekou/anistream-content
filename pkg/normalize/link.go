@@ -5,7 +5,7 @@ import (
 	"github.com/vgekko/anistream-content/internal/entity"
 	"strings"
 
-	"golang.org/x/exp/slices"
+	"slices"
 )
 
 var validFilterParams = []string{"kinopoisk_id", "shikimori_id", "imdb_id", "worldart_id"}
@@ -16,7 +16,7 @@ func FilterParams(urlParams string) (entity.TitleFilter, error) {
 		return entity.TitleFilter{}, fmt.Errorf("invalid search parameter")
 	}
 
-	return entity.TitleFilter{Option: x[0], Value: x[1]}, nil
+	return entity.TitleFilter{Opt: x[0], Val: x[1]}, nil
 }
 
 func URL(link string) string {

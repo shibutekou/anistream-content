@@ -9,7 +9,7 @@ import (
 	"github.com/vgekko/anistream-content/internal/usecase"
 	"github.com/vgekko/anistream-content/pkg/apperror"
 	"github.com/vgekko/anistream-content/pkg/normalize"
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 type infoRoutes struct {

@@ -4,25 +4,22 @@ option go_package = "./internal/controller/grpc/pb";
 
 service ContentService {
   rpc GetTitleInfo (GetTitleInfoRequest) returns (GetTitleInfoReply);
-  rpc GetLink (GetLinkRequest) returns (GetLinkReply);
 }
 
 message TitleInfo {
-  string title = 1;
-  string titleOrig = 2;
-  int32 year = 3;
-  string kinopoiskID = 4;
-  string shikimoriID = 5;
-  string imdbID = 6;
-  repeated string screenshots = 7;
-}
-
-message Link {
-  string url = 1;
+  string link = 1;
+  string title = 2;
+  string titleOrig = 3;
+  string otherTitle = 4;
+  int32 year = 5;
+  string kinopoiskID = 6;
+  string shikimoriID = 7;
+  string imdbID = 8;
+  repeated string screenshots = 9;
 }
 
 message TitleFilter {
-  string svc = 1;
+  string opt = 1;
   string val = 2;
 }
 
@@ -32,12 +29,4 @@ message GetTitleInfoRequest {
 
 message GetTitleInfoReply {
   repeated TitleInfo titleInfo = 1;
-}
-
-message GetLinkRequest {
-  TitleFilter filter = 1;
-}
-
-message GetLinkReply {
-  Link link = 1;
 }

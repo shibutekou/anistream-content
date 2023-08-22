@@ -1,88 +1,57 @@
 package usecase
 
 import (
-	"context"
+	"errors"
 	"fmt"
+	"github.com/allegro/bigcache"
 	"github.com/vgekko/anistream-content/internal/entity"
-	"github.com/vgekko/anistream-content/internal/repository/redis"
+	"github.com/vgekko/anistream-content/internal/repository"
 	"github.com/vgekko/anistream-content/internal/webapi"
 )
 
 type InfoUseCaseImpl struct {
-	kodik          webapi.Kodik
-	infoRepository redis.InfoRepository
+	kodik webapi.Kodik
+	cache repository.CacheRepository
 }
 
-func NewInfoUseCase(kodik webapi.Kodik, infoRepository redis.InfoRepository) *InfoUseCaseImpl {
+func NewInfoUseCase(kodik webapi.Kodik, cache repository.CacheRepository) *InfoUseCaseImpl {
 	return &InfoUseCaseImpl{
-		kodik:          kodik,
-		infoRepository: infoRepository,
+		kodik: kodik,
+		cache: cache,
 	}
 }
 
 func (uc *InfoUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleInfo, error) {
 	op := "InfoUseCase.Search"
-	ctx := context.Background()
 
 	var titleInfos []entity.TitleInfo
 	var err error
 
 	// check the cache if cache database is available
 	// if data exists in cache, take it from there
-	redisAvailable := uc.infoRepository.Healthcheck(ctx)
-	key := fmt.Sprintf("%s:%s", filter.Option, filter.Value)
+	key := fmt.Sprintf("%s:%s", filter.Opt, filter.Val)
+	exists := true
 
-	if redisAvailable {
-		exists, err := uc.infoRepository.Lookup(ctx, key)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
-		}
-
-		if exists {
-			titleInfos, err = uc.infoRepository.FromCache(ctx, key)
-			if err != nil {
-				return nil, fmt.Errorf("%s: %w", op, err)
-			}
-
-			return titleInfos, nil
-		}
-	}
-
-	// if data does not exists in cache
-	results, err := uc.kodik.SearchTitles(filter.Option, filter.Value)
+	val, err := uc.cache.Get(key)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	titleInfos = toTitleInfo(results)
-
-	// save data in cache
-	if redisAvailable {
-		err = uc.infoRepository.Cache(ctx, key, titleInfos)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
+		if errors.As(err, &bigcache.ErrEntryNotFound) {
+			exists = false
 		}
 	}
 
-	return titleInfos, nil
-}
+	if exists {
+		return val, nil
+	} else {
+		titleInfos, err = uc.kodik.SearchTitles(filter.Opt, filter.Val)
+		if err != nil {
+			return nil, fmt.Errorf("%s:%w", op, err)
+		}
 
-func toTitleInfo(src entity.KodikAPI) []entity.TitleInfo {
-	var ti entity.TitleInfo
-	titleInfos := make([]entity.TitleInfo, 0, len(src.Results))
+		// saving data to cache
+		if err := uc.cache.Set(key, titleInfos); err != nil {
+			return nil, fmt.Errorf("%s:%w", op, err)
+		}
 
-	for _, v := range src.Results {
-		ti.Title = v.Title
-		ti.TitleOrig = v.TitleOrig
-		ti.OtherTitle = v.OtherTitle
-		ti.Year = v.Year
-		ti.KinopoiskID = v.KinopoiskID
-		ti.ShikimoriID = v.ShikimoriID
-		ti.IMDbID = v.IMDbID
-		ti.Screenshots = v.Screenshots
-
-		titleInfos = append(titleInfos, ti)
+		return titleInfos, nil
 	}
-
-	return titleInfos
 }

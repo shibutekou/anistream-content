@@ -6,7 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/vgekko/anistream-content/internal/controller/http/v1/middleware"
 	"github.com/vgekko/anistream-content/internal/usecase"
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
@@ -27,7 +27,6 @@ func NewRouter(handler *gin.Engine, uc *usecase.UseCase, log *slog.Logger) {
 		search := v1.Group("/search")
 		{
 			newInfoRoutes(search, uc.InfoUseCase, log)
-			newLinkRoutes(search, uc.LinkUseCase, log)
 		}
 
 	}

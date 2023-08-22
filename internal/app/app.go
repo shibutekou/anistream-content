@@ -5,12 +5,12 @@ import (
 	"github.com/vgekko/anistream-content/config"
 	controllerGrpc "github.com/vgekko/anistream-content/internal/controller/grpc"
 	v1 "github.com/vgekko/anistream-content/internal/controller/http/v1"
-	redisRepository "github.com/vgekko/anistream-content/internal/repository/redis"
+	"github.com/vgekko/anistream-content/internal/repository"
 	"github.com/vgekko/anistream-content/internal/usecase"
 	"github.com/vgekko/anistream-content/internal/webapi"
+	"github.com/vgekko/anistream-content/pkg/cache"
 	"github.com/vgekko/anistream-content/pkg/httpserver"
 	"github.com/vgekko/anistream-content/pkg/logger/sl"
-	redisClient "github.com/vgekko/anistream-content/pkg/redis"
 	"google.golang.org/grpc"
 	"net"
 	"os"
@@ -24,18 +24,17 @@ func Run() {
 	// initialize slog logger
 	log := sl.New(cfg.Env)
 
-	// initialize redis
-	redis := redisClient.NewClient(cfg.Redis)
-	defer redis.Close()
+	// initialize cache
+	cacher := cache.New(cfg.Cache)
 
 	// web api
 	webAPI := webapi.NewWebAPI()
 
 	// repositories
-	redisRepo := redisRepository.NewRepositoryRedis(redis, cfg.Redis)
+	repo := repository.NewRepository(cacher)
 
 	// use cases
-	useCase := usecase.NewUseCase(redisRepo, webAPI)
+	useCase := usecase.NewUseCase(repo, webAPI)
 
 	// HTTP server
 	engine := gin.New()
@@ -47,7 +46,7 @@ func Run() {
 
 	// starting gRPC server
 	grpcServer := grpc.NewServer()
-	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.InfoUseCase, useCase.LinkUseCase, log)
+	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.InfoUseCase, log)
 
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {

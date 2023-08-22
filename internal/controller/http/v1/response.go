@@ -3,7 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/vgekko/anistream-content/internal/controller/http/v1/middleware"
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 type errorResponse struct {
