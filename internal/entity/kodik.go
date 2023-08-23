@@ -1,8 +1,12 @@
 package entity
 
+type KodikError struct {
+	Error string `json:"error"`
+}
+
 type KodikAPI struct {
-	Time    string `json:"time,omitempty"`
-	Total   int    `json:"total,omitempty"`
+	Time    string `json:"time"`
+	Total   int    `json:"total"`
 	Results `json:"results"`
 }
 
