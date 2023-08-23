@@ -9,14 +9,8 @@ import (
 
 type Config struct {
 	Env   string `yaml:"env" env-default:"local"`
-	HTTP  `yaml:"http"`
 	GRPC  `yaml:"grpc"`
 	Cache `yaml:"cache"`
-}
-
-type HTTP struct {
-	Host string `yaml:"host" env-default:"localhost"`
-	Port string `yaml:"port" env-default:"8800"`
 }
 
 type GRPC struct {
@@ -28,9 +22,9 @@ type Cache struct {
 }
 
 func Load() *Config {
-	configPath := os.Getenv("CONFIG_PATH")
+	configPath := os.Getenv("CONTENT_SERVICE_CONFIG_PATH")
 	if configPath == "" {
-		log.Fatal("CONFIG_PATH is not set")
+		log.Fatal("CONTENT_SERVICE_CONFIG_PATH is not set")
 	}
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {

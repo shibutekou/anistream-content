@@ -2,17 +2,14 @@ package app
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/vgekko/anistream-content/config"
 	controllerGrpc "github.com/vgekko/anistream-content/internal/controller/grpc"
-	v1 "github.com/vgekko/anistream-content/internal/controller/http/v1"
 	"github.com/vgekko/anistream-content/internal/repository"
 	"github.com/vgekko/anistream-content/internal/usecase"
 	"github.com/vgekko/anistream-content/internal/webapi"
 	"github.com/vgekko/anistream-content/pkg/cache"
-	"github.com/vgekko/anistream-content/pkg/httpserver"
-	"github.com/vgekko/anistream-content/pkg/logger/sl"
-	"google.golang.org/grpc"
+	"github.com/vgekko/anistream-content/pkg/grpcserver"
+	"github.com/vgekko/anistream-content/pkg/logger"
 	"net"
 	"os"
 	"os/signal"
@@ -21,7 +18,7 @@ import (
 
 func Run(cfg *config.Config) {
 	// initialize slog logger
-	log := sl.New(cfg.Env)
+	log := logger.New(cfg.Env)
 
 	// initialize bigcache
 	bc := cache.New(cfg.Cache)
@@ -35,27 +32,19 @@ func Run(cfg *config.Config) {
 	// use cases
 	useCase := usecase.NewUseCase(repo, webAPI)
 
-	// HTTP server
-	engine := gin.New()
-	v1.NewRouter(engine, useCase, log)
-
-	// starting HTTP server
-	log.Info("starting HTTP server")
-	httpServer := httpserver.Start(engine)
-
 	// starting gRPC server
-	grpcServer := grpc.NewServer()
+	grpcServer := grpcserver.New(log)
 	controllerGrpc.NewContentServerGrpc(grpcServer, useCase.ContentUseCase, log)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPC.Port))
 	if err != nil {
-		log.Error("could not listen tcp: ", sl.Err(err))
+		log.Error("could not listen tcp: ", err.Error())
 	}
 
 	log.Info("starting gRPC server")
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
-			log.Error("app.Run: grpc: ", sl.Err(err))
+			log.Error("app.Run: grpc: ", err.Error())
 		}
 	}()
 
@@ -66,13 +55,14 @@ func Run(cfg *config.Config) {
 	select {
 	case s := <-interrupt:
 		log.Info("app.Run: signal: " + s.String())
-	case err := <-httpServer.Notify():
-		log.Error("app.Run: notify: ", sl.Err(err))
 	}
 
-	// shutdown
-	err = httpServer.Shutdown()
+	// stopping gRPC server
+	grpcServer.GracefulStop()
+
+	// closing listener
+	err = lis.Close()
 	if err != nil {
-		log.Error("app.Run: shutdown: ", sl.Err(err))
+		log.Error("app.Run: lis.Close: ", err.Error())
 	}
 }

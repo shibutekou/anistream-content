@@ -1,12 +1,12 @@
 .PHONY: start dr dc redc protoc
 
 start:
-	go build -o anistream cmd/main.go
-	./anigo
+	go build -o anistream-content cmd/main.go
+	./anistream-content
 
 dr:
-	docker build --tag anistream .
-	docker run -e KODIK_TOKEN=${KODIK_TOKEN} --network=host anistream
+	docker build --tag anistream-content .
+	docker run -e KODIK_TOKEN=${KODIK_TOKEN} --network=host anistream-content
 
 dc:
 	docker compose down
