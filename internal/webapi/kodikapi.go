@@ -6,6 +6,7 @@ import (
 	"github.com/vgekko/anistream-content/pkg/apperror"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/vgekko/anistream-content/internal/entity"
@@ -102,7 +103,13 @@ func toTitleContent(src entity.KodikAPI) []entity.TitleContent {
 		titleContents = append(titleContents, ti)
 	}
 
-	return filterUnique(titleContents)
+	// delete the same entries (in fact, kodikapi gives out the same titles with different voice acting separately)
+	titleContents = filterUnique(titleContents)
+
+	// sort by release year (asc)
+	sortByYear(titleContents)
+
+	return titleContents
 }
 
 // filterUnique removes duplicate title contents from slice
@@ -118,4 +125,10 @@ func filterUnique(titleContents []entity.TitleContent) []entity.TitleContent {
 	}
 
 	return uniqueTitles
+}
+
+func sortByYear(contents []entity.TitleContent) {
+	sort.SliceStable(contents, func(i, j int) bool {
+		return contents[i].Year < contents[j].Year
+	})
 }
