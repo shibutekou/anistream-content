@@ -14,6 +14,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	stdlog "log"
 )
 
 func Run(cfg *config.Config) {
@@ -38,13 +40,13 @@ func Run(cfg *config.Config) {
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPC.Port))
 	if err != nil {
-		log.Error("could not listen tcp: ", err.Error())
+		stdlog.Fatalf("app.Run: %s", err)
 	}
 
 	log.Info("starting grpc server")
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
-			log.Error("app.Run: grpc: ", err.Error())
+			stdlog.Fatalf("app.Run: %s", err.Error())
 		}
 	}()
 
@@ -52,10 +54,7 @@ func Run(cfg *config.Config) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-	select {
-	case s := <-interrupt:
-		log.Info("app.Run: signal: " + s.String())
-	}
+	<-interrupt
 
 	// stopping gRPC server
 	grpcServer.GracefulStop()
@@ -63,6 +62,6 @@ func Run(cfg *config.Config) {
 	// closing listener
 	err = lis.Close()
 	if err != nil {
-		log.Error("app.Run: lis.Close: ", err.Error())
+		stdlog.Fatalf("app.Run: lis.Close: %v", err.Error())
 	}
 }
