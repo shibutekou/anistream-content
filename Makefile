@@ -1,8 +1,8 @@
 .PHONY: start dr dc redc protoc
 
 start:
-	go build -o anistream-content cmd/main.go
-	./anistream-content
+	go build -o bin/anistream-content cmd/main.go
+	./bin/anistream-content
 
 dr:
 	docker build --tag anistream-content .

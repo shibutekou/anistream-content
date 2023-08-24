@@ -41,7 +41,7 @@ func Run(cfg *config.Config) {
 		log.Error("could not listen tcp: ", err.Error())
 	}
 
-	log.Info("starting gRPC server")
+	log.Info("starting grpc server")
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Error("app.Run: grpc: ", err.Error())

@@ -8,6 +8,6 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o anistream-content ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/anistream-content ./cmd/main.go
 
-CMD ["./anistream-content"]
+CMD ["./bin/anistream-content"]
