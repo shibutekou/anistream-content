@@ -42,7 +42,7 @@ func (s *ContentServer) GetTitleContent(ctx context.Context, in *pb.GetTitleCont
 		{apperror.ErrUnknown, codes.Unknown},
 	}
 
-	titleInfos, err := s.uc.Search(entity.TitleFilter{Opt: in.Filter.Opt, Val: in.Filter.Val})
+	content, err := s.uc.Search(entity.TitleFilter{Opt: in.Filter.Opt, Val: in.Filter.Val})
 	for _, pErr := range possibleErrors {
 		if errors.Is(errors.Unwrap(err), pErr.err) {
 			s.log.Error(err.Error())
@@ -51,39 +51,41 @@ func (s *ContentServer) GetTitleContent(ctx context.Context, in *pb.GetTitleCont
 	}
 
 	reply := pb.GetTitleContentReply{}
-	reply.TitleContent = transformTitleContent(titleInfos)
+	reply.Content = transformTitleContent(content)
 
 	return &reply, status.New(codes.OK, "success").Err()
 }
 
-func transformTitleContent(titles []entity.TitleContent) []*pb.TitleContent {
-	var result = make([]*pb.TitleContent, 0, len(titles))
+func transformTitleContent(content entity.Content) *pb.Content {
+	transformedContent := new(pb.Content)
 
-	for i := range titles {
-		tmp := pb.TitleContent{
-			Link:             titles[i].Link,
-			Title:            titles[i].Title,
-			TitleOrig:        titles[i].TitleOrig,
-			OtherTitle:       titles[i].OtherTitle,
-			Year:             titles[i].Year,
-			KinopoiskID:      titles[i].KinopoiskID,
-			ShikimoriID:      titles[i].ShikimoriID,
-			ImdbID:           titles[i].IMDbID,
-			AnimeStatus:      titles[i].AnimeStatus,
-			AnimeDescription: titles[i].AnimeDescription,
-			PosterURL:        titles[i].PosterURL,
-			Duration:         titles[i].Duration,
-			KinopoiskRating:  titles[i].KinopoiskRating,
-			ImdbRating:       titles[i].IMDbRating,
-			ShikimoriRating:  titles[i].ShikimoriRating,
-			PremiereWorld:    titles[i].PremiereWorld,
-			EpisodesTotal:    titles[i].EpisodesTotal,
-			Writers:          titles[i].Writers,
-			Screenshots:      titles[i].Screenshots,
+	for i := range content.Titles {
+		tmp := pb.Title{
+			Link:             content.Titles[i].Link,
+			Title:            content.Titles[i].Title,
+			TitleOrig:        content.Titles[i].TitleOrig,
+			OtherTitle:       content.Titles[i].OtherTitle,
+			Year:             content.Titles[i].Year,
+			KinopoiskID:      content.Titles[i].KinopoiskID,
+			ShikimoriID:      content.Titles[i].ShikimoriID,
+			ImdbID:           content.Titles[i].IMDbID,
+			AnimeStatus:      content.Titles[i].AnimeStatus,
+			AnimeDescription: content.Titles[i].AnimeDescription,
+			PosterURL:        content.Titles[i].PosterURL,
+			Duration:         content.Titles[i].Duration,
+			KinopoiskRating:  content.Titles[i].KinopoiskRating,
+			ImdbRating:       content.Titles[i].IMDbRating,
+			ShikimoriRating:  content.Titles[i].ShikimoriRating,
+			PremiereWorld:    content.Titles[i].PremiereWorld,
+			EpisodesTotal:    content.Titles[i].EpisodesTotal,
+			Writers:          content.Titles[i].Writers,
+			Screenshots:      content.Titles[i].Screenshots,
 		}
 
-		result = append(result, &tmp)
+		transformedContent.Titles = append(transformedContent.Titles, &tmp)
 	}
 
-	return result
+	transformedContent.Total = content.Total
+
+	return transformedContent
 }

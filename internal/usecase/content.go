@@ -21,10 +21,14 @@ func NewContentUseCase(kodik webapi.Kodik, cache repository.CacheRepository) *Co
 	}
 }
 
-func (uc *ContentUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleContent, error) {
+func (uc *ContentUseCaseImpl) Search(filter entity.TitleFilter) (entity.Content, error) {
 	op := "ContentUseCase.Search"
 
-	var titleContents []entity.TitleContent
+	var (
+		content entity.Content
+		titles  []entity.Title
+	)
+
 	var err error
 
 	// check the cache if cache database is available
@@ -32,7 +36,7 @@ func (uc *ContentUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleC
 	key := fmt.Sprintf("%s:%s", filter.Opt, filter.Val)
 	exists := true
 
-	content, err := uc.cache.Get(key)
+	content, err = uc.cache.Get(key)
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			exists = false
@@ -42,16 +46,20 @@ func (uc *ContentUseCaseImpl) Search(filter entity.TitleFilter) ([]entity.TitleC
 	if exists {
 		return content, nil
 	} else {
-		titleContents, err = uc.kodik.SearchTitles(filter.Opt, filter.Val)
+		titles, err = uc.kodik.SearchTitles(filter.Opt, filter.Val)
 		if err != nil {
-			return nil, fmt.Errorf("%s:%w", op, err)
+			return entity.Content{}, fmt.Errorf("%s:%w", op, err)
 		}
+
+		content.Titles = titles
+		content.Total = int32(len(titles))
 
 		// saving data to cache
-		if err := uc.cache.Set(key, titleContents); err != nil {
-			return nil, fmt.Errorf("%s:%w", op, err)
+		if err := uc.cache.Set(key, content); err != nil {
+			return entity.Content{}, fmt.Errorf("%s:%w", op, err)
 		}
 
-		return titleContents, nil
+		return content, nil
 	}
+
 }

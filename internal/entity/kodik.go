@@ -6,7 +6,7 @@ type KodikError struct {
 
 type KodikAPI struct {
 	Time    string `json:"time"`
-	Total   int    `json:"total"`
+	Total   int32  `json:"total"`
 	Results `json:"results"`
 }
 

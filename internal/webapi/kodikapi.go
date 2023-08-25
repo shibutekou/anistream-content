@@ -3,13 +3,13 @@ package webapi
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/vgekko/anistream-content/internal/entity"
 	"github.com/vgekko/anistream-content/pkg/apperror"
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 	"time"
-
-	"github.com/vgekko/anistream-content/internal/entity"
 )
 
 const baseURLSearch = "https://kodikapi.com/search?with_material_data=true&"
@@ -33,10 +33,13 @@ func NewKodikWebAPI() *KodikWebAPI {
 }
 
 // SearchTitles sends a request to external API and gets data about titles
-func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.TitleContent, error) {
+func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.Title, error) {
 	var kodikResponse entity.KodikAPI
 
-	url := fmt.Sprintf("%stoken=%s&%s=%s", baseURLSearch, k.token, option, value)
+	value = strings.ReplaceAll(value, " ", "%20")
+
+	url := fmt.Sprintf("%stoken=%s&%s=%s&strict=true", baseURLSearch, k.token, option, value)
+	fmt.Println("URL: ", url)
 
 	resp, err := k.client.Get(url)
 	if err != nil {
@@ -75,9 +78,9 @@ func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.TitleContent,
 	}
 }
 
-func toTitleContent(src entity.KodikAPI) []entity.TitleContent {
-	var ti entity.TitleContent
-	titleContents := make([]entity.TitleContent, 0, len(src.Results))
+func toTitleContent(src entity.KodikAPI) []entity.Title {
+	var ti entity.Title
+	titles := make([]entity.Title, 0, len(src.Results))
 
 	for _, v := range src.Results {
 		ti.Link = v.Link
@@ -100,21 +103,21 @@ func toTitleContent(src entity.KodikAPI) []entity.TitleContent {
 		ti.EpisodesTotal = v.EpisodesTotal
 		ti.Writers = v.Writers
 
-		titleContents = append(titleContents, ti)
+		titles = append(titles, ti)
 	}
 
 	// delete the same entries (in fact, kodikapi gives out the same titles with different voice acting separately)
-	titleContents = filterUnique(titleContents)
+	titles = filterUnique(titles)
 
 	// sort by release year (asc)
-	sortByYear(titleContents)
+	sortByYear(titles)
 
-	return titleContents
+	return titles
 }
 
 // filterUnique removes duplicate title contents from slice
-func filterUnique(titleContents []entity.TitleContent) []entity.TitleContent {
-	var uniqueTitles []entity.TitleContent
+func filterUnique(titleContents []entity.Title) []entity.Title {
+	var uniqueTitles []entity.Title
 	seen := make(map[string]bool)
 
 	for _, v := range titleContents {
@@ -127,7 +130,7 @@ func filterUnique(titleContents []entity.TitleContent) []entity.TitleContent {
 	return uniqueTitles
 }
 
-func sortByYear(contents []entity.TitleContent) {
+func sortByYear(contents []entity.Title) {
 	sort.SliceStable(contents, func(i, j int) bool {
 		return contents[i].Year < contents[j].Year
 	})

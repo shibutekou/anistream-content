@@ -3,10 +3,15 @@ syntax = "proto3";
 option go_package = "./internal/controller/grpc/pb";
 
 service ContentService {
-  rpc GetTitleContent (GetTitleContentRequest) returns (GetTitleContentReply); //{
+  rpc GetTitleContent (GetTitleContentRequest) returns (GetTitleContentReply);
 }
 
-message TitleContent {
+message Content {
+  repeated Title titles = 1;
+  int32 total           = 2;
+}
+
+message Title {
   string link                   = 1;
   string title                  = 2;
   string titleOrig              = 3;
@@ -38,5 +43,5 @@ message GetTitleContentRequest {
 }
 
 message GetTitleContentReply {
-  repeated TitleContent titleContent = 1;
+  Content content = 1;
 }

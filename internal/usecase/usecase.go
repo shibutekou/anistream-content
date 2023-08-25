@@ -15,5 +15,5 @@ func NewUseCase(cache repository.CacheRepository, kodik *webapi.WebAPI) *UseCase
 }
 
 type ContentUseCase interface {
-	Search(filter entity.TitleFilter) ([]entity.TitleContent, error)
+	Search(filter entity.TitleFilter) (entity.Content, error)
 }

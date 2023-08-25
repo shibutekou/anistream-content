@@ -10,8 +10,8 @@ type Repository struct {
 }
 
 type CacheRepository interface {
-	Get(key string) ([]entity.TitleContent, error)
-	Set(key string, data []entity.TitleContent) error
+	Get(key string) (entity.Content, error)
+	Set(key string, data entity.Content) error
 }
 
 func NewRepository(cache *bigcache.BigCache) *Repository {
