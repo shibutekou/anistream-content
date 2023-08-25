@@ -38,7 +38,7 @@ func (k *KodikWebAPI) SearchTitles(option, value string) ([]entity.Title, error)
 
 	value = strings.ReplaceAll(value, " ", "%20")
 
-	url := fmt.Sprintf("%stoken=%s&%s=%s&strict=true", baseURLSearch, k.token, option, value)
+	url := fmt.Sprintf("%stoken=%s&%s=%s", baseURLSearch, k.token, option, value)
 	fmt.Println("URL: ", url)
 
 	resp, err := k.client.Get(url)
