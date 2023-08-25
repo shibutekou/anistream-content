@@ -40,15 +40,16 @@ func (r *CacheRepositoryImpl) Get(key string) (entity.Content, error) {
 }
 
 func (r *CacheRepositoryImpl) Set(key string, data entity.Content) error {
+	op := "CacheRepository.Set"
 	var b bytes.Buffer
 
 	// encodes data to bytes buffer
 	if err := gob.NewEncoder(&b).Encode(data); err != nil {
-		return err
+		return fmt.Errorf("%s: %s", op, err)
 	}
 
 	if err := r.cache.Set(key, b.Bytes()); err != nil {
-		return err
+		return fmt.Errorf("%s: %s", op, err)
 	}
 
 	return nil
